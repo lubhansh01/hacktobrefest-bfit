@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+/*
+  Hacktoberfest Dehradun 2026 — design tokens.
+  Accent = signal green (terminal / "run" green), info = sky.
+  Components reference `accent-*` / `info-*`, never a raw hex, so the whole
+  site rebrands by editing this block alone.
+*/
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Surfaces */
+  --color-canvas: #07090c;
+  --color-surface: #0e1116;
+  --color-surface-2: #151a21;
+
+  /* Accent — signal green */
+  --color-accent-300: #86efac;
+  --color-accent-400: #4ade80;
+  --color-accent-500: #22c55e;
+  --color-accent-600: #16a34a;
+  --color-accent-700: #15803d;
+
+  /* Info — sky (mentors, secondary data) */
+  --color-info-300: #7dd3fc;
+  --color-info-400: #38bdf8;
+  --color-info-500: #0ea5e9;
+
+  --radius-4xl: 2rem;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Slow vertical sweep for the HUD grid backdrop. */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@utility animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Fine-line technical grid. Pair with `bg-canvas` on a relative parent. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility text-outline {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+  color: transparent;
+}
+
+/* Tabular figures for timers, counts and IDs so numbers don't jitter. */
+@utility nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+@layer base {
+  body {
+    @apply bg-canvas text-white antialiased;
+    font-synthesis-weight: none;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+  }
+
+  /* Visible keyboard focus everywhere. The old build removed rings entirely. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-400;
+    border-radius: 4px;
+  }
+
+  button:not(:disabled), a[href], [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: var(--color-accent-500);
+    color: #04070a;
+  }
+}
+
+/* Honour the OS "reduce motion" setting: hold the finished state, don't animate. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

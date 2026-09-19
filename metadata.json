@@ -1,0 +1,10 @@
+{
+  "name": "Hacktoberfest Dehradun 2026",
+  "description": "A 24+ hour hybrid hackathon in collaboration with Major League Hacking and Build with AI at Google.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "entities": {
+    "Track": {
+      "title": "Track",
+      "description": "Category for hackathon solutions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "ProblemStatement": {
+      "title": "Problem Statement",
+      "description": "Specific challenge within a track",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "trackId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "trackId", "title", "description"]
+    },
+    "Team": {
+      "title": "Team",
+      "description": "A group of participants registered for the hackathon",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "trackId": { "type": "string" },
+        "problemId": { "type": "string" },
+        "assignedMentorName": { "type": "string", "description": "Display name of the appointed mentor" },
+        "assignedMentorEmail": { "type": "string", "description": "Email of the appointed mentor for authorization" },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "phone": { "type": "string" },
+              "role": { "type": "string", "enum": ["leader", "member"] }
+            },
+            "required": ["name", "email", "phone", "role"]
+          }
+        },
+        "contactEmail": { "type": "string", "format": "email" },
+        "city": { "type": "string", "description": "Current city of the team" },
+        "memberEmails": { "type": "array", "items": { "type": "string" } },
+        "memberPhones": { "type": "array", "items": { "type": "string" } },
+        "consent": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "approved", "disapproved"] },
+        "currentRoundOrder": { "type": "number", "description": "The rank/order of the round the team is currently competing in" },
+        "isEliminated": { "type": "boolean", "description": "True if the team has been disqualified/eliminated" },
+        "roundSubmissions": { 
+          "type": "object", 
+          "description": "Work done submissions per round. Key is round order number as string." 
+        },
+        "roundEvaluations": { 
+          "type": "object", 
+          "description": "Marks and comments from mentors per round. Key is round order number as string." 
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "trackId", "problemId", "members", "contactEmail", "consent", "status", "currentRoundOrder", "isEliminated"]
+    },
+    "Timeline": {
+      "title": "Timeline",
+      "description": "Hackathon event schedule",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "event": { "type": "string" },
+        "time": { "type": "string" },
+        "description": { "type": "string" },
+        "day": { "type": "string", "enum": ["1", "2"] },
+        "order": { "type": "number" }
+      },
+      "required": ["event", "time", "order"]
+    },
+    "Speaker": {
+      "title": "Speaker",
+      "description": "Guest speaker for hackathon sessions",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "company": { "type": "string" },
+        "photo": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "role", "company"]
+    },
+    "Partner": {
+      "title": "Partner",
+      "description": "Strategic partner or sponsor",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "tier": { "type": "string" },
+        "logo": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "tier", "order"]
+    },
+    "Round": {
+      "title": "Round",
+      "description": "Hackathon progression stages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "isActive", "order"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile for management and auth",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "mentor", "user"] }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Mentor": {
+      "title": "Mentor",
+      "description": "Appointed mentor metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "expertise": { "type": "string" },
+        "assignedTeamCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email"]
+    },
+    "EventTeamMember": {
+      "title": "Event Team Member",
+      "description": "Personnel managing the hackathon events",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "designation": { "type": "string" },
+        "company": { "type": "string" },
+        "photo": { "type": "string" },
+        "permissions": {
+           "type": "object",
+           "properties": {
+              "manage_teams": { "type": "boolean" },
+              "manage_mentors": { "type": "boolean" },
+              "manage_rounds": { "type": "boolean" },
+              "manage_tracks": { "type": "boolean" },
+              "manage_timeline": { "type": "boolean" },
+              "manage_speakers": { "type": "boolean" },
+              "manage_partners": { "type": "boolean" },
+              "manage_location": { "type": "boolean" },
+              "view_teams": { "type": "boolean" },
+              "manage_event_team": { "type": "boolean" },
+              "manage_email_marketing": { "type": "boolean" },
+              "manage_guests": { "type": "boolean" }
+           }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email"]
+    },
+    "Location": {
+      "title": "Location",
+      "description": "Hackathon event venue details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "mapUrl": { "type": "string" },
+        "city": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "address"]
+    },
+    "HonouredGuest": {
+      "title": "Honoured Guest",
+      "description": "Special guest for the hackathon",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "position": { "type": "string" },
+        "photo": { "type": "string" },
+        "order": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "position"]
+    }
+  },
+  "firestore": {
+    "/tracks/{trackId}": {
+      "schema": "Track",
+      "description": "Available tracks for the hackathon"
+    },
+    "/problems/{problemId}": {
+      "schema": "ProblemStatement",
+      "description": "Problem statements for each track"
+    },
+    "/teams/{teamId}": {
+      "schema": "Team",
+      "description": "Registered teams"
+    },
+    "/timeline/{itemId}": {
+      "schema": "Timeline",
+      "description": "Event schedule items"
+    },
+    "/rounds/{roundId}": {
+      "schema": "Round",
+      "description": "Hackathon rounds"
+    },
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User roles and metadata"
+    },
+    "/mentors/{uid}": {
+      "schema": "Mentor",
+      "description": "Mentor professional details"
+    },
+    "/speakers/{speakerId}": {
+      "schema": "Speaker",
+      "description": "Session speakers"
+    },
+    "/partners/{partnerId}": {
+      "schema": "Partner",
+      "description": "Strategic partners"
+    },
+    "/event_team/{memberId}": {
+      "schema": "EventTeamMember",
+      "description": "Event management team members"
+    },
+    "/location/{id}": {
+      "schema": "Location",
+      "description": "Event venue details"
+    },
+    "/guests/{guestId}": {
+      "schema": "HonouredGuest",
+      "description": "Honoured guests of the event"
+    }
+  }
+}
