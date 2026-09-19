@@ -36,7 +36,7 @@ export default function MentorPanel({ user }: { user: User | null }) {
       {/* Sidebar */}
       <aside className="w-72 border-r border-white/5 bg-black/40 backdrop-blur-md hidden lg:flex flex-col">
         <div className="p-8 pb-4">
-          <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-accent-500 mb-8">Mentor Protocol</p>
+          <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-accent-500 mb-8">Mentor Protocol</p>
           <nav className="space-y-2">
             <SidebarLink to="/mentor/assigned" icon={Users} label="Assigned Squads" active={activeTab === "assigned"} />
             <SidebarLink to="/mentor/evaluation" icon={Star} label="Evaluation Hub" active={activeTab === "evaluation"} />
@@ -152,7 +152,7 @@ function AssignedTeams({ user }: { user: User }) {
                     <h3 className="text-2xl font-black uppercase tracking-tighter italic text-white">{team.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
                       <Database className="w-3 h-3 text-accent-500/50" />
-                      <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest block">
+                      <span className="text-[11px] font-bold text-white/20 uppercase tracking-widest block">
                         {(() => {
                           const track = tracks.find(t => t.id === team.trackId || t.name === team.trackId);
                           return track ? (track.name || track.title) : team.trackId;
@@ -161,7 +161,7 @@ function AssignedTeams({ user }: { user: User }) {
                     </div>
                   </div>
                  <span className={cn(
-                    "px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest",
+                    "px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest",
                     team.isEliminated ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"
                  )}>
                     {team.isEliminated ? 'ELIMINATED' : 'ACTIVE'}
@@ -170,15 +170,15 @@ function AssignedTeams({ user }: { user: User }) {
               <div className="space-y-4">
                  <div className="grid grid-cols-2 gap-4">
                     <div className="p-3 bg-black/40 border border-white/5 rounded-xl">
-                       <span className="text-[8px] font-black text-white/20 uppercase tracking-widest block mb-1">Members</span>
+                       <span className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-1">Members</span>
                        <span className="text-xs font-bold text-white/70">{team.members?.length || 0} Participants</span>
                     </div>
                     <div className="p-3 bg-black/40 border border-white/5 rounded-xl">
-                       <span className="text-[8px] font-black text-white/20 uppercase tracking-widest block mb-1">Average Score</span>
+                       <span className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-1">Average Score</span>
                        <span className="text-xs font-bold text-white/70">TBD</span>
                     </div>
                  </div>
-                 <Link to="/mentor/evaluation" className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center transition-all">
+                 <Link to="/mentor/evaluation" className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center transition-all">
                     View Submissions <ChevronRight className="w-4 h-4 ml-1" />
                  </Link>
               </div>
@@ -311,7 +311,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                   : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
               )}
             >
-              <span className={cn("text-[9px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-black/60" : "text-accent-500")}>
+              <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-black/60" : "text-accent-500")}>
                 Round {r.order}
               </span>
               <span className="font-black text-sm uppercase tracking-tight">{r.name}</span>
@@ -329,9 +329,9 @@ function MentorEvaluationManager({ user }: { user: User }) {
         )}>
           <div className="flex items-center gap-3 mb-2">
             <Target className="w-5 h-5 text-accent-500" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-500">Active Operational Phase</span>
+            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-accent-500">Active Operational Phase</span>
             {activeRound.isActive && (
-              <span className="bg-accent-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest animate-pulse">Live</span>
+              <span className="bg-accent-500 text-black text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest animate-pulse">Live</span>
             )}
           </div>
           <h3 className="text-2xl font-black uppercase tracking-tighter italic text-white leading-none">
@@ -363,7 +363,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                     <div className="flex flex-col gap-1 mt-1">
                       <div className="flex items-center gap-2">
                         <Database className="w-3 h-3 text-accent-500/50" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
                           Track: {(() => {
                             const track = tracks.find(t => t.id === team.trackId || t.name === team.trackId);
                             return track ? (track.name || track.title) : team.trackId;
@@ -375,7 +375,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                         return problem ? (
                           <div className="flex items-center gap-2 mt-0.5">
                             <FileText className="w-3 h-3 text-accent-500/50" />
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest leading-none">
+                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest leading-none">
                               Problem: {problem.title}
                             </span>
                           </div>
@@ -388,7 +388,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                             <span className="text-xl font-black text-accent-500">{evaluation.marks}/100</span>
                           </div>
                         ) : (
-                          <span className="text-[10px] font-black bg-accent-500/10 text-accent-500 px-3 py-1 rounded-full uppercase tracking-widest border border-accent-500/20">Pending Evaluation</span>
+                          <span className="text-[11px] font-black bg-accent-500/10 text-accent-500 px-3 py-1 rounded-full uppercase tracking-widest border border-accent-500/20">Pending Evaluation</span>
                         )}
                       </div>
                     </div>
@@ -413,7 +413,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-white/30">
                       <Star className="w-4 h-4" />
-                      <span className="text-[10px] uppercase font-black tracking-widest">Submission Data</span>
+                      <span className="text-[11px] uppercase font-black tracking-widest">Submission Data</span>
                     </div>
 
                     {/* Problem Statement Detail */}
@@ -422,8 +422,8 @@ function MentorEvaluationManager({ user }: { user: User }) {
                         if (!problem) return null;
                         return (
                           <div className="p-5 bg-white/5 border border-white/5 rounded-2xl">
-                             <h4 className="text-[9px] font-black uppercase tracking-widest text-accent-500/80 mb-2">Operational Goal: {problem.title}</h4>
-                             <p className="text-[11px] text-white/40 leading-relaxed italic">{problem.description}</p>
+                             <h4 className="text-[10px] font-black uppercase tracking-widest text-accent-500/80 mb-2">Operational Goal: {problem.title}</h4>
+                             <p className="text-[12px] text-white/40 leading-relaxed italic">{problem.description}</p>
                           </div>
                         );
                     })()}
@@ -431,7 +431,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                     {submission ? (
                       <div className="p-6 bg-black/40 border border-white/5 rounded-3xl min-h-[150px]">
                         <p className="text-white/70 italic text-sm leading-relaxed whitespace-pre-wrap">{submission.workDone}</p>
-                        <p className="mt-4 text-[9px] text-white/20 font-bold uppercase tracking-widest">Logged: {formatTimestamp(submission.updatedAt)}</p>
+                        <p className="mt-4 text-[10px] text-white/20 font-bold uppercase tracking-widest">Logged: {formatTimestamp(submission.updatedAt)}</p>
                       </div>
                     ) : (
                       <div className="p-6 bg-white/5 border border-dashed border-white/10 rounded-3xl text-center flex flex-col items-center justify-center min-h-[150px]">
@@ -445,11 +445,11 @@ function MentorEvaluationManager({ user }: { user: User }) {
                     <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                        <div className="flex items-center gap-2 text-accent-500">
                           <Target className="w-4 h-4" />
-                          <span className="text-[10px] uppercase font-black tracking-widest">Evaluation Form</span>
+                          <span className="text-[11px] uppercase font-black tracking-widest">Evaluation Form</span>
                        </div>
                        <div className="space-y-4 bg-accent-500/5 p-6 rounded-3xl border border-accent-500/20 shadow-[0_0_50px_rgba(34,197,94,0.05)]">
                           <div className="space-y-2">
-                             <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Assign Marks (0-100)</label>
+                             <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-2">Assign Marks (0-100)</label>
                              <input 
                                type="number" 
                                max={100}
@@ -460,7 +460,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                              />
                           </div>
                           <div className="space-y-2">
-                             <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Mentor Feedback</label>
+                             <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-2">Mentor Feedback</label>
                              <textarea 
                                placeholder="Assign comments, logic critique, or advice..."
                                value={comments}
@@ -470,7 +470,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                           </div>
                           <button 
                             onClick={() => saveEvaluation(team.id)}
-                            className="w-full py-4 bg-accent-500 text-black font-black uppercase text-[10px] tracking-[0.2em] rounded-xl hover:bg-accent-400 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-accent-500 text-black font-black uppercase text-[11px] tracking-[0.2em] rounded-xl hover:bg-accent-400 transition-all flex items-center justify-center gap-2"
                           >
                             <Send className="w-3.5 h-3.5" /> Synchronize Records
                           </button>
@@ -482,7 +482,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
                      <div className="space-y-4">
                         <div className="flex items-center gap-2 text-green-500">
                           <CheckCircle className="w-4 h-4" />
-                          <span className="text-[10px] uppercase font-black tracking-widest">Records Entry</span>
+                          <span className="text-[11px] uppercase font-black tracking-widest">Records Entry</span>
                        </div>
                        <div className="p-6 bg-green-500/5 border border-green-500/10 rounded-3xl min-h-[150px]">
                           <p className="text-green-500/70 text-sm leading-relaxed italic">"{evaluation.comments}"</p>
@@ -658,7 +658,7 @@ function MentorEliminationManager({ user }: { user: User }) {
                   : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
               )}
             >
-              <span className={cn("text-[9px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-white/60" : "text-red-500")}>
+              <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-white/60" : "text-red-500")}>
                 Round {r.order}
               </span>
               <span className="font-black text-sm uppercase tracking-tight">{r.name}</span>
@@ -676,9 +676,9 @@ function MentorEliminationManager({ user }: { user: User }) {
         )}>
            <div className="flex items-center gap-3 mb-2">
             <XCircle className="w-5 h-5 text-red-500" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500">Elimination Gate Active</span>
+            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-red-500">Elimination Gate Active</span>
             {activeRound.isActive && (
-              <span className="bg-red-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest animate-pulse">Open</span>
+              <span className="bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest animate-pulse">Open</span>
             )}
           </div>
           <h3 className="text-2xl font-black uppercase tracking-tighter italic text-white leading-none">
@@ -713,7 +713,7 @@ function MentorEliminationManager({ user }: { user: User }) {
                     </div>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                         <label className="text-[8px] font-black uppercase tracking-widest text-white/20 ml-2">Gate Score</label>
+                         <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">Gate Score</label>
                          <input 
                             type="number" 
                             placeholder="Score"
@@ -723,7 +723,7 @@ function MentorEliminationManager({ user }: { user: User }) {
                          />
                       </div>
                       <div className="space-y-2">
-                         <label className="text-[8px] font-black uppercase tracking-widest text-white/20 ml-2">Notes for Team</label>
+                         <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">Notes for Team</label>
                          <textarea 
                             placeholder="Why this decision? Critical feedback..."
                             value={gateNote}
@@ -786,7 +786,7 @@ function MentorEliminationManager({ user }: { user: User }) {
                   <div>
                     <h4 className="font-black uppercase text-white text-lg leading-none tracking-tight">{team.name}</h4>
                     <span className={cn(
-                      "text-[9px] font-black uppercase tracking-[0.2em] mt-2 block",
+                      "text-[10px] font-black uppercase tracking-[0.2em] mt-2 block",
                       team.isEliminated ? "text-red-500/50" : "text-green-500/50"
                     )}>
                       {team.isEliminated ? 'ELIMINATED' : `QUALIFIED (ADVANCED TO RD ${team.currentRoundOrder})`}
@@ -795,7 +795,7 @@ function MentorEliminationManager({ user }: { user: User }) {
                 </div>
                 <button 
                   onClick={() => revertDecision(team)}
-                  className="px-6 py-3 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all text-white/40 hover:text-white border border-white/5"
+                  className="px-6 py-3 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-white/40 hover:text-white border border-white/5"
                 >
                   Revert
                 </button>
@@ -879,7 +879,7 @@ function MentorMailManager({ user }: { user: User }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="space-y-6">
-           <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Target Selection ({selectedTeams.length})</p>
+           <p className="text-[11px] font-black uppercase tracking-widest text-white/30">Target Selection ({selectedTeams.length})</p>
            <div className="grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto no-scrollbar">
               {teams.map(team => (
                  <button 
@@ -898,7 +898,7 @@ function MentorMailManager({ user }: { user: User }) {
         </div>
 
         <div className="space-y-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Transmission Data</p>
+          <p className="text-[11px] font-black uppercase tracking-widest text-white/30">Transmission Data</p>
           <div className="space-y-4">
             <input 
               placeholder="Signal Subject"
@@ -914,7 +914,7 @@ function MentorMailManager({ user }: { user: User }) {
             />
             {status && (
               <div className={cn(
-                "p-4 rounded-xl text-[10px] font-black uppercase tracking-widest border",
+                "p-4 rounded-xl text-[11px] font-black uppercase tracking-widest border",
                 status.includes("Error") || status.includes("Failure") ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-green-500/10 border-green-500/20 text-green-500"
               )}>
                 {status}

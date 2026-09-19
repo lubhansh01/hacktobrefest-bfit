@@ -100,7 +100,7 @@ export default function App() {
             </div>
 
             <div>
-              <h2 className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/35 mb-4">Event</h2>
+              <h2 className="font-mono text-[11px] tracking-[0.25em] uppercase text-white/35 mb-4">Event</h2>
               <ul className="space-y-2.5 text-sm">
                 <li><Link to="/#tracks" className="text-white/60 hover:text-white transition-colors">Tracks</Link></li>
                 <li><Link to="/#schedule" className="text-white/60 hover:text-white transition-colors">Schedule</Link></li>
@@ -109,19 +109,19 @@ export default function App() {
             </div>
 
             <div>
-              <h2 className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/35 mb-4">When &amp; where</h2>
+              <h2 className="font-mono text-[11px] tracking-[0.25em] uppercase text-white/35 mb-4">When &amp; where</h2>
               <ul className="space-y-2.5 text-sm text-white/60">
                 <li>{EVENT_DATES}</li>
                 <li>BFIT College, Dehradun</li>
-                <li className="text-white/35 text-[13px]">Start time announced by email</li>
+                <li className="text-white/35 text-[14px]">Start time announced by email</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-white/10">
             <div className="max-w-6xl mx-auto px-5 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <p className="text-white/35 text-[13px]">&copy; 2026 Hacktoberfest Dehradun. Organised by BFIT College Dehradun.</p>
-              <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-white/25">In collaboration with MLH &amp; Google</p>
+              <p className="text-white/35 text-[14px]">&copy; 2026 Hacktoberfest Dehradun. Organised by BFIT College Dehradun.</p>
+              <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/25">In collaboration with MLH &amp; Google</p>
             </div>
           </div>
         </footer>

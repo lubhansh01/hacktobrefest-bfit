@@ -35,13 +35,13 @@ const OptimizedImage = ({ src, alt, className, imgClassName, ...props }: any) =>
         <div className="absolute inset-0 z-10 flex items-center justify-center">
           <div className="w-full h-full bg-gradient-to-r from-transparent via-white/[0.05] to-transparent shimmer-effect animate-shimmer" />
           <div className="absolute inset-0 flex items-center justify-center">
-             <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/10 animate-pulse">Establishing Connection</div>
+             <div className="text-[11px] font-black uppercase tracking-[0.4em] text-white/10 animate-pulse">Establishing Connection</div>
           </div>
         </div>
       )}
       
       {error ? (
-        <div className="absolute inset-0 flex items-center justify-center text-white/45 text-[10px] font-bold uppercase tracking-widest">
+        <div className="absolute inset-0 flex items-center justify-center text-white/45 text-[11px] font-bold uppercase tracking-widest">
           Visual Link Broken
         </div>
       ) : (
@@ -67,9 +67,9 @@ const AgendaItem = ({ time, event, description }: any) => (
   <div className="flex gap-6 pb-12 border-l border-accent-500/20 ml-4 relative">
     <div className="absolute -left-[9px] top-0 w-4 h-4 bg-accent-500 rounded-full border-4 border-black" />
     <div className="flex-1 pl-8">
-      <div className="font-mono text-[13px] text-accent-400 tracking-wide mb-1.5 nums">{time}</div>
+      <div className="font-mono text-[14px] text-accent-400 tracking-wide mb-1.5 nums">{time}</div>
       <h3 className="font-display text-lg font-bold text-white mb-1.5">{event}</h3>
-      <p className="text-white/50 text-[14px] leading-relaxed">{description}</p>
+      <p className="text-white/50 text-[15px] leading-relaxed">{description}</p>
     </div>
   </div>
 );
@@ -112,7 +112,7 @@ const SpeakerCard = ({ name, role, company, photo }: any) => {
       <div className="p-8 relative z-10 border-t border-white/5">
         <h4 className="text-2xl font-black uppercase italic tracking-tighter text-white mb-1 leading-none">{name}</h4>
         <div className="text-sm font-bold uppercase tracking-widest text-accent-500 mb-4">{role}</div>
-        <div className="text-[10px] uppercase tracking-[0.2em] text-white/45 font-black flex items-center gap-2">
+        <div className="text-[11px] uppercase tracking-[0.2em] text-white/45 font-black flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-accent-500 rounded-full" />
           {company}
         </div>
@@ -205,7 +205,7 @@ const SponsorLogo = ({ name, tier, logo }: any) => {
         {name}
       </h4>
       
-      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 group-hover:text-accent-500/60 transition-colors">
+      <div className="text-[11px] font-black uppercase tracking-[0.3em] text-white/30 group-hover:text-accent-500/60 transition-colors">
         {tier} Partner
       </div>
     </div>
@@ -243,7 +243,7 @@ export default function AboutPage() {
             className="inline-flex items-center gap-2.5 rounded-full border border-accent-500/25 bg-accent-500/8 px-3.5 py-1.5 mb-7"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-accent-400" />
-            <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-accent-300">Identity &amp; purpose</span>
+            <span className="font-mono text-[12px] tracking-[0.2em] uppercase text-accent-300">Identity &amp; purpose</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
@@ -273,13 +273,13 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 gap-6 pt-8">
               <div className="p-6 bg-surface/60 border border-white/10 rounded-2xl">
                 <div className="font-display text-3xl font-bold text-white mb-1.5">200+</div>
-                <div className="font-mono text-[10px] uppercase text-white/45 tracking-[0.15em] leading-relaxed">
+                <div className="font-mono text-[11px] uppercase text-white/45 tracking-[0.15em] leading-relaxed">
                   Teams registered <br /> till now and still counting
                 </div>
               </div>
               <div className="p-6 bg-surface/60 border border-white/10 rounded-2xl">
                 <div className="font-display text-3xl font-bold text-white mb-1.5">500+</div>
-                <div className="font-mono text-[10px] uppercase text-white/45 tracking-[0.15em] leading-relaxed">
+                <div className="font-mono text-[11px] uppercase text-white/45 tracking-[0.15em] leading-relaxed">
                   Community <br /> Members
                 </div>
               </div>
@@ -307,7 +307,7 @@ export default function AboutPage() {
         <div className="max-w-2xl relative z-10">
           <div className="flex items-center gap-2.5 mb-5">
              <MapPin className="w-4 h-4 text-accent-400" aria-hidden="true" />
-             <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-accent-400">The venue</span>
+             <span className="font-mono text-[12px] tracking-[0.2em] uppercase text-accent-400">The venue</span>
           </div>
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-6 leading-[1.05]">
             Dehradun, <span className="text-white/25">Uttarakhand</span>
@@ -321,7 +321,7 @@ export default function AboutPage() {
              <div className="font-display text-base font-bold text-white mb-1.5">
               {eventLocation ? `${eventLocation.name}, ${eventLocation.city || 'Dehradun'}` : "BFIT College, Dehradun"}
              </div>
-             <div className="text-[13px] text-white/45 leading-relaxed">
+             <div className="text-[14px] text-white/45 leading-relaxed">
               {eventLocation ? eventLocation.address : "Full address is sent to selected teams by email."}
              </div>
              {eventLocation?.mapUrl && (
@@ -329,7 +329,7 @@ export default function AboutPage() {
                  href={eventLocation.mapUrl} 
                  target="_blank" 
                  rel="noopener noreferrer"
-                 className="inline-flex items-center gap-2 mt-4 text-[13px] font-medium text-accent-400 hover:text-accent-300 transition-colors"
+                 className="inline-flex items-center gap-2 mt-4 text-[14px] font-medium text-accent-400 hover:text-accent-300 transition-colors"
                >
                  Open in Maps <Rocket className="w-3.5 h-3.5" aria-hidden="true" />
                </a>
@@ -343,7 +343,7 @@ export default function AboutPage() {
       <section className="px-6 max-w-7xl mx-auto mb-32">
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl md:text-5xl font-bold leading-[1.05] mb-4">The <span className="text-white/25">agenda</span></h2>
-          <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/40">Two days, phase by phase</p>
+          <p className="font-mono text-[12px] tracking-[0.2em] uppercase text-white/40">Two days, phase by phase</p>
         </div>
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-20">
           <div>

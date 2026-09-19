@@ -45,7 +45,7 @@ export default function TeamQRCode({ team }: TeamQRCodeProps) {
       {/* Header Pattern */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-500 block mb-1">
+          <span className="text-[11px] font-black uppercase tracking-[0.3em] text-accent-500 block mb-1">
             Official Entry Ticket
           </span>
           <h4 className="text-xl font-black uppercase tracking-tighter italic text-white leading-tight">
@@ -72,7 +72,7 @@ export default function TeamQRCode({ team }: TeamQRCodeProps) {
         </div>
         
         {/* Verification Tag */}
-        <div className="mt-4 text-[10px] font-mono font-bold text-white/40 tracking-widest break-all select-all text-center">
+        <div className="mt-4 text-[11px] font-mono font-bold text-white/40 tracking-widest break-all select-all text-center">
           HASH: {team.id.substring(0, 10).toUpperCase()}...
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function TeamQRCode({ team }: TeamQRCodeProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-end">
           <div>
-            <div className="text-[9px] font-black uppercase tracking-wider text-white/30 truncate max-w-[150px]">
+            <div className="text-[10px] font-black uppercase tracking-wider text-white/30 truncate max-w-[150px]">
               TEAMS / SQUADDIE
             </div>
             <div className="text-lg font-black uppercase tracking-tighter italic text-white leading-none mt-1">
@@ -96,16 +96,16 @@ export default function TeamQRCode({ team }: TeamQRCodeProps) {
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[9px] font-black uppercase tracking-wider text-white/30">
+            <div className="text-[10px] font-black uppercase tracking-wider text-white/30">
               STATUS
             </div>
             <div className="mt-1">
               {team.checkedIn ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black bg-green-500/10 border border-green-500/20 text-green-400 uppercase tracking-widest">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-green-500/10 border border-green-500/20 text-green-400 uppercase tracking-widest">
                   <CheckCircle className="w-3 h-3 text-green-400" /> Verified
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black bg-accent-500/10 border border-accent-500/20 text-accent-400 uppercase tracking-widest animate-pulse">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-accent-500/10 border border-accent-500/20 text-accent-400 uppercase tracking-widest animate-pulse">
                   <Clock className="w-3 h-3 text-accent-400" /> Pending Gate
                 </span>
               )}
@@ -114,7 +114,7 @@ export default function TeamQRCode({ team }: TeamQRCodeProps) {
         </div>
 
         {team.checkedInAt && (
-          <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-center text-[9px] text-white/40 font-bold uppercase tracking-widest">
+          <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-center text-[10px] text-white/40 font-bold uppercase tracking-widest">
             INDUCTION TIME: {new Date(team.checkedInAt?.seconds ? team.checkedInAt.seconds * 1000 : team.checkedInAt).toLocaleString()}
           </div>
         )}
@@ -124,7 +124,7 @@ export default function TeamQRCode({ team }: TeamQRCodeProps) {
           <button
             onClick={handleDownload}
             disabled={downloading}
-            className="flex-1 py-3 px-4 bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40"
+            className="flex-1 py-3 px-4 bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40"
           >
             <Download className="w-3 h-3" />
             {downloading ? "Saving..." : "Save Pass"}

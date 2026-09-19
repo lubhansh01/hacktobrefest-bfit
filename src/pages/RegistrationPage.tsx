@@ -238,7 +238,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="p-6 bg-white/[0.03] border border-white/5 rounded-3xl w-full text-left space-y-4"
         >
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-white/30">Already Registered?</h4>
+          <h4 className="text-[11px] font-black uppercase tracking-widest text-white/30">Already Registered?</h4>
           <p className="text-white/60 text-xs leading-relaxed">
             If your team was already registered, you can log in to access your designated hacker dashboard, view your team status, and upload submission protocols.
           </p>
@@ -262,7 +262,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-[10px] uppercase tracking-widest text-white/45"
+          className="text-[11px] uppercase tracking-widest text-white/45"
         >
           Event Schedule: {EVENT_DATES}
         </motion.p>
@@ -465,7 +465,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
 
             <div className="space-y-10">
                 <div className="space-y-4">
-                    <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40 ml-1">Team Identity</label>
+                    <label className="text-[11px] uppercase tracking-[0.3em] font-bold text-white/40 ml-1">Team Identity</label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input 
                             type="text" 
@@ -486,11 +486,11 @@ export default function RegistrationPage({ user }: { user: User | null }) {
 
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                        <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40 ml-1">Member Rosters</label>
+                        <label className="text-[11px] uppercase tracking-[0.3em] font-bold text-white/40 ml-1">Member Rosters</label>
                         <button 
                             disabled={members.length >= 3}
                             onClick={addMember}
-                            className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-black text-accent-500 disabled:opacity-20 translate-y-2"
+                            className="flex items-center gap-2 text-[11px] uppercase tracking-widest font-black text-accent-500 disabled:opacity-20 translate-y-2"
                         >
                             <UserPlus className="w-3.5 h-3.5" /> Add Member
                         </button>
@@ -498,7 +498,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
                     {members.map((member, i) => (
                         <div key={i} className="pt-6 border-t border-white/5 relative group space-y-4">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent-500/50 italic">
+                                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-accent-500/50 italic">
                                     {member.role === 'leader' ? "Team Leader (Member 1)" : `Team Member ${i+1}`}
                                 </span>
                                 {members.length > 1 && member.role !== 'leader' && (
@@ -538,7 +538,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
                 </div>
 
                 <div className="space-y-4 pt-6 border-t border-white/10">
-                    <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40 ml-1">Primary Contact Email</label>
+                    <label className="text-[11px] uppercase tracking-[0.3em] font-bold text-white/40 ml-1">Primary Contact Email</label>
                     <input 
                         type="email" 
                         placeholder="Preferred contact email" 
