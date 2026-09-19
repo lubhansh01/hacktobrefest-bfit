@@ -17,6 +17,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { api } from "../lib/api";
 
 export default function MentorPanel({ user }: { user: User | null }) {
   const [activeTab, setActiveTab] = useState("assigned");
@@ -596,7 +597,7 @@ function MentorEliminationManager({ user }: { user: User }) {
         if (updErr) throw updErr;
       }
 
-      fetch("/api/send-qualification-update", {
+      fetch(api("/api/send-qualification-update"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -847,7 +848,7 @@ function MentorMailManager({ user }: { user: User }) {
       const targetTeams = teams.filter(t => selectedTeams.includes(t.id));
       const emails = targetTeams.flatMap(t => t.memberEmails || [t.contactEmail]);
 
-      const res = await fetch("/api/send-bulk-update", {
+      const res = await fetch(api("/api/send-bulk-update"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ emails, subject, message })

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { EVENT_DATES } from "../lib/event";
+import { api } from "../lib/api";
 
 export default function RegistrationPage({ user }: { user: User | null }) {
   const [searchParams] = useSearchParams();
@@ -151,7 +152,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
       if (insertErr) throw insertErr;
       
       // Trigger background confirmation email for leader
-      fetch("/api/send-confirmation", {
+      fetch(api("/api/send-confirmation"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -164,7 +165,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
       // Trigger notifications for other members
       const otherMembers = members.filter(m => m.role === "member" && m.email);
       if (otherMembers.length > 0) {
-          fetch("/api/send-member-notifications", {
+          fetch(api("/api/send-member-notifications"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({

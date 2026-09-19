@@ -3,6 +3,7 @@ import { supabase, subscribe } from "../lib/supabase";
 import { Html5Qrcode } from "html5-qrcode";
 import { ShieldCheck, CheckCircle2, Clock, Users, Search, QrCode, Camera, Ban, Loader2, ArrowRight, Mail } from "lucide-react";
 import { cn } from "../lib/utils";
+import { api } from "../lib/api";
 
 export default function AttendanceManager() {
   const [teams, setTeams] = useState<any[]>([]);
@@ -92,7 +93,7 @@ export default function AttendanceManager() {
     setActionStatus(null);
 
     try {
-      const response = await fetch("/api/send-team-tickets", {
+      const response = await fetch(api("/api/send-team-tickets"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

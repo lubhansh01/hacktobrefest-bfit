@@ -40,6 +40,7 @@ import { cn } from "../lib/utils";
 import * as XLSX from 'xlsx';
 import { Download, Filter } from "lucide-react";
 import AttendanceManager from "../components/AttendanceManager";
+import { api } from "../lib/api";
 
 const getImageUrl = (url: string) => {
   if (!url) return "";
@@ -464,7 +465,7 @@ function MailManager() {
             if (squadEmails.length === 0) continue;
 
             setStatus(`Processing dispatch for "${t.name}" squaddies...`);
-            const response = await fetch("/api/send-team-tickets", {
+            const response = await fetch(api("/api/send-team-tickets"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -502,7 +503,7 @@ function MailManager() {
           }
 
           setStatus(`Processing admission ticket dispatch...`);
-          const response = await fetch("/api/send-team-tickets", {
+          const response = await fetch(api("/api/send-team-tickets"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -556,7 +557,7 @@ function MailManager() {
           return;
         }
 
-        const response = await fetch("/api/send-bulk-update", {
+        const response = await fetch(api("/api/send-bulk-update"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ emails: targetEmails, subject, message })
@@ -960,7 +961,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
       if (insertErr) throw insertErr;
 
       // Trigger status update email to ALL members
-      fetch("/api/send-status-update", {
+      fetch(api("/api/send-status-update"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1040,7 +1041,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
 
       // Trigger status update email if approved or disapproved to ALL members
       if (status === 'approved' || status === 'disapproved') {
-        fetch("/api/send-status-update", {
+        fetch(api("/api/send-status-update"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -2066,7 +2067,7 @@ function RoundsManager() {
                 const allEmails = (liveTeams ?? []).flatMap((t: any) => t.memberEmails || []);
                 
                 if (allEmails.length > 0) {
-                    fetch("/api/send-round-activation", {
+                    fetch(api("/api/send-round-activation"), {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -2226,7 +2227,7 @@ function EliminationManager() {
 
       await supabase.from("teams").update(updates).eq("id", team.id);
 
-      fetch("/api/send-qualification-update", {
+      fetch(api("/api/send-qualification-update"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -2723,7 +2724,7 @@ function EventTeamManager() {
 
       // Notify event team member via API
       try {
-        const response = await fetch("/api/notify-team-appointment", {
+        const response = await fetch(api("/api/notify-team-appointment"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -3033,7 +3034,7 @@ function MentorsManager() {
 
       // Notify event team member via API
       try {
-        const response = await fetch("/api/notify-mentor-appointment", {
+        const response = await fetch(api("/api/notify-mentor-appointment"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -3098,7 +3099,7 @@ function MentorsManager() {
       const teamTrack = tracks.find(tr => tr.id === team.trackId || tr.name === team.trackId);
       const teamProblem = problems.find(pr => pr.id === team.problemId || pr.title === team.problemId);
 
-      fetch("/api/send-assignment-notifications", {
+      fetch(api("/api/send-assignment-notifications"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -3172,7 +3173,7 @@ function MentorsManager() {
       const cleanEmail = mentor.email.trim().toLowerCase();
       setNotificationStatus({ type: 'success', message: `Resending instructions to ${mentor.name}...` });
       
-      const response = await fetch("/api/notify-mentor-appointment", {
+      const response = await fetch(api("/api/notify-mentor-appointment"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -4043,10 +4044,12 @@ function PartnersManager() {
             <input 
               type="number" 
               value={(editingPartner ? editingPartner.order : newPartner.order) || 0}
-              onChange={(e) => editingPartner
-                ? setEditingPartner({...editingPartner, order: e.target.value})
-                : setNewPartner({...newPartner, order: e.target.value})
-              }
+              onChange={(e) => {
+                const order = Number(e.target.value) || 0;
+                editingPartner
+                  ? setEditingPartner({...editingPartner, order})
+                  : setNewPartner({...newPartner, order});
+              }}
               className="w-full bg-black/40 border border-white/10 p-5 rounded-2xl outline-none focus:border-accent-500 text-sm font-bold transition-all"
             />
           </div>
@@ -4246,7 +4249,7 @@ function MarketingManager() {
 
   const fetchLogs = async () => {
     try {
-      const res = await fetch("/api/mail-logs");
+      const res = await fetch(api("/api/mail-logs"));
       const data = await res.json();
       if (Array.isArray(data)) {
         setMailLogs(data);
@@ -4267,7 +4270,7 @@ function MarketingManager() {
     setCurrentIndex(-1);
     setStatus("Verifying SMTP node connection...");
     try {
-      const response = await fetch("/api/verify-smtp");
+      const response = await fetch(api("/api/verify-smtp"));
       const data = await response.json();
       if (data.success) {
         setStatus("System Check: SMTP Node is ONLINE and authenticated.");
@@ -4290,7 +4293,7 @@ function MarketingManager() {
     setIsTesting(true);
     setStatus(`Dispatching diagnostic to ${testEmail}...`);
     try {
-      const response = await fetch("/api/test-email", {
+      const response = await fetch(api("/api/test-email"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ to: testEmail })
@@ -4328,7 +4331,7 @@ function MarketingManager() {
     setActiveError(null);
 
     try {
-      const response = await fetch("/api/send-marketing-email", {
+      const response = await fetch(api("/api/send-marketing-email"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ emails: [email] })

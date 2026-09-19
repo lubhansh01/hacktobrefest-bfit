@@ -1,57 +1,64 @@
 # Hacktoberfest Dehradun 2026
 
-Registration and event-management portal for Hacktoberfest at BFIT College, Dehradun.
-React + Vite on the front, Supabase (Postgres, Auth, Realtime) for data, and a small
-Express server for transactional email.
+Event platform for Hacktoberfest Dehradun, organised by BFIT College Dehradun.
+Frontend and backend deploy independently.
 
-## Run locally
+```
+frontend/   React + Vite SPA (Supabase client). Deploy as a static site.
+backend/    Express mail API. Deploy as a Node service.
+supabase/   schema.sql + seed script. Run once against your Supabase project.
+```
 
-**Prerequisites:** Node.js, and a Supabase project.
+## Local development
 
-1. `npm install`
-2. `cp .env.example .env` and fill in:
-   - `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` — from your project's API settings
-   - the `SMTP_*` values, if you want outgoing email
-3. Apply the database schema (see below).
-4. `npm run dev`
+Two terminals — they are separate apps with separate installs:
+
+```bash
+cd backend  && npm install && npm run dev   # API  on :3001
+cd frontend && npm install && npm run dev   # SPA  on :5173
+```
+
+Vite proxies `/api/*` to `http://localhost:3001`, so `VITE_API_URL` stays empty
+locally and the same relative paths work in both environments.
+
+## Environment
+
+Copy each `.env.example` to `.env` and fill it in.
+
+| Where | Key | Notes |
+|---|---|---|
+| frontend | `VITE_SUPABASE_URL` | Supabase project URL |
+| frontend | `VITE_SUPABASE_ANON_KEY` | Publishable key. Safe in the browser — RLS protects the data |
+| frontend | `VITE_API_URL` | Empty in dev. In prod, the deployed backend origin |
+| backend | `PORT` | Defaults to 3001 |
+| backend | `CORS_ORIGIN` | Comma-separated frontend origins. Empty allows any (dev only) |
+| backend | `SMTP_*` | Mail credentials |
+| backend | `APP_URL` | Public frontend URL, used for links inside emails |
+
+Never put a Supabase **secret** (`sb_secret_…` / service role) key in a `VITE_`
+variable — those are inlined into the browser bundle.
+
+## Deploying
+
+**Frontend** (Vercel, Netlify, Cloudflare Pages): root `frontend`, build
+`npm run build`, output `dist`. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+and `VITE_API_URL` (the backend's public URL) at build time — Vite inlines them,
+so changing one needs a rebuild.
+
+**Backend** (Cloud Run, Railway, Render, Fly): root `backend`, start
+`npm run start`. Set the `SMTP_*` vars, `APP_URL`, and `CORS_ORIGIN` to the
+frontend's deployed origin. Health check: `GET /healthz`.
 
 ## Database
 
-`supabase/schema.sql` is the whole thing: tables, row-level security, the realtime
-publication, and the RPCs. Apply it through the Supabase SQL editor, the CLI, or the
-Supabase MCP server's `apply_migration`. It is idempotent, so re-running it is safe.
+Run `supabase/schema.sql` in the Supabase SQL editor (13 tables, RLS enabled).
+Optionally seed tracks:
 
-Enable **Google** under Authentication → Providers, and add your app's URL to the
-allowed redirect URLs.
-
-Seed the tracks once the schema is in place:
-
-```
-VITE_SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npx tsx seed_tracks.ts
+```bash
+VITE_SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npx tsx supabase/seed_tracks.ts
 ```
 
-### Checking the schema
-
-Authorisation lives in RLS policies, so it is worth testing before an event rather than
-during one. `supabase/schema.check.sql` asserts the policies and RPCs behave — that a
-signed-out visitor cannot list teams, that a team leader cannot edit a rival's entry or
-promote themselves to admin, that activating a round deactivates the others, and so on.
-
-```
-npm run db:check    # needs psql and a local Postgres on :55433
-```
-
-It runs against a throwaway local database using `supabase/auth_stub.sql` to stand in
-for Supabase's `auth` schema. Never apply the stub to a real project.
-
-## Roles
-
-| Role | How someone gets it |
-|---|---|
-| `admin` | the hardcoded super-admin address, or `role = 'admin'` in `profiles` |
-| `event_team` | a row in `event_team`, with a per-permission JSON map |
-| `mentor` | a row in `mentors` |
-| `user` | everyone else |
-
-Roles are resolved server-side by the `sync_my_profile()` RPC, which the client calls on
-sign-in. The browser reads its role; it never assigns one.
+Google sign-in needs the Google provider enabled under Authentication →
+Providers, with `https://<project>.supabase.co/auth/v1/callback` registered as
+the redirect URI in Google Cloud, and your frontend origin listed under
+Authentication → URL Configuration.

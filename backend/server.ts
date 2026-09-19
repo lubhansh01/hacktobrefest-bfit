@@ -1,6 +1,5 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
-import path from "path";
+import cors from "cors";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
@@ -11,6 +10,15 @@ async function startServer() {
   const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json());
+
+  // The frontend is deployed separately, so it calls this API cross-origin.
+  // CORS_ORIGIN is a comma-separated allowlist; unset means allow any origin
+  // (fine for local dev, set it in production).
+  const allowed = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()).filter(Boolean);
+  app.use(cors({ origin: allowed && allowed.length > 0 ? allowed : true }));
+
+  // Liveness probe for the host platform.
+  app.get("/healthz", (_req, res) => res.json({ ok: true }));
 
   // Email Transporter (Lazy Initializer)
   let transporter: nodemailer.Transporter | null = null;
@@ -709,7 +717,7 @@ async function startServer() {
           </div>
         `,
       });
-      res.json({ success: true, message: "Mentor induction email deployed.", ...result });
+      res.json({ ...result, success: true, message: "Mentor induction email deployed." });
     } catch (error: any) {
       console.error("Mentor Notification error:", error);
       res.status(500).json({ success: false, error: error.message || "Failed to send mentor induction email." });
@@ -1157,23 +1165,8 @@ async function startServer() {
     }
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  }
-
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`API listening on http://localhost:${PORT}`);
   });
 }
 

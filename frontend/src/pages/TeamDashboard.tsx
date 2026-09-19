@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import TeamQRCode from "../components/TeamQRCode";
+import { api } from "../lib/api";
 
 interface Team {
   id: string;
@@ -155,7 +156,7 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
       
       // Trigger confirmation email for the submission
       if (user?.email) {
-        fetch("/api/send-submission-confirmation", {
+        fetch(api("/api/send-submission-confirmation"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -416,7 +417,7 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
           <TeamQRCode team={team} />
 
           {/* Mentor Assignment */}
-          {(team.assignedMentorId || team.assignedMentorEmail || team.assignedMentorName) && (
+          {(team.assignedMentorEmail || team.assignedMentorName) && (
             <div className="bg-gradient-to-r from-accent-500/10 to-accent-500/5 border border-accent-500/20 p-8 rounded-[40px] space-y-6 relative overflow-hidden group">
                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-500/5 blur-[40px] pointer-events-none" />
                <div className="flex items-center gap-3">
