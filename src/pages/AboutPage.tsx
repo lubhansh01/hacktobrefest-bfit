@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, onSnapshot, doc } from "firebase/firestore";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { subscribe, subscribeRow } from "../lib/supabase";
 import { cn } from "../lib/utils";
 import { 
   Users, 
@@ -221,38 +220,14 @@ export default function AboutPage() {
   const [eventLocation, setEventLocation] = useState<any>(null);
 
   useEffect(() => {
-    const unsubLocation = onSnapshot(doc(db, "location", "venue"), (snap) => {
-      if (snap.exists()) {
-        setEventLocation(snap.data());
-      }
-    }, (err) => handleFirestoreError(err, OperationType.GET, "location/venue"));
-    const qTimeline = query(collection(db, "timeline"), orderBy("order", "asc"));
-    const unsubTimeline = onSnapshot(qTimeline, (snapshot) => {
-      setTimeline(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "timeline"));
-
-    const qSpeakers = query(collection(db, "speakers"), orderBy("createdAt", "asc"));
-    const unsubSpeakers = onSnapshot(qSpeakers, (snapshot) => {
-      setSpeakers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "speakers"));
-
-    const qGuests = query(collection(db, "guests"), orderBy("order", "asc"));
-    const unsubGuests = onSnapshot(qGuests, (snapshot) => {
-      setGuests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "guests"));
-
-    const qPartners = query(collection(db, "partners"), orderBy("order", "asc"));
-    const unsubPartners = onSnapshot(qPartners, (snapshot) => {
-      setPartners(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "partners"));
-
-    return () => {
-      unsubTimeline();
-      unsubSpeakers();
-      unsubGuests();
-      unsubPartners();
-      unsubLocation();
-    };
+    const unsubs = [
+      subscribeRow("location", "venue", (row) => row && setEventLocation(row)),
+      subscribe("timeline", setTimeline, { orderBy: { column: "order" } }),
+      subscribe("speakers", setSpeakers, { orderBy: { column: "createdAt" } }),
+      subscribe("guests", setGuests, { orderBy: { column: "order" } }),
+      subscribe("partners", setPartners, { orderBy: { column: "order" } }),
+    ];
+    return () => unsubs.forEach((u) => u());
   }, []);
 
   return (

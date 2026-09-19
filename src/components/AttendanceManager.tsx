@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { collection, query, where, onSnapshot, doc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db, auth } from "../lib/firebase";
+import { supabase, subscribe } from "../lib/supabase";
 import { Html5Qrcode } from "html5-qrcode";
 import { ShieldCheck, CheckCircle2, Clock, Users, Search, QrCode, Camera, Ban, Loader2, ArrowRight, Mail } from "lucide-react";
 import { cn } from "../lib/utils";
@@ -22,18 +21,18 @@ export default function AttendanceManager() {
 
   // Load qualified (approved) teams in real-time
   useEffect(() => {
-    const q = query(collection(db, "teams"), where("status", "==", "approved"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setTeams(data);
-      setLoading(false);
-    }, (error) => {
-      console.error("Attendance feed connection error:", error);
-      setLoading(false);
-    });
+    const unsubscribe = subscribe(
+      "teams",
+      (rows) => {
+        setTeams(rows);
+        setLoading(false);
+      },
+      { eq: { column: "status", value: "approved" } },
+      (error) => {
+        console.error("Attendance feed connection error:", error);
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, []);
@@ -41,12 +40,14 @@ export default function AttendanceManager() {
   // Handle manual or scanned check-in status update
   const toggleCheckIn = async (teamId: string, currentStatus: boolean) => {
     try {
-      const staffEmail = auth.currentUser?.email || "Staff Operator";
-      await updateDoc(doc(db, "teams", teamId), {
+      const { data: session } = await supabase.auth.getSession();
+      const staffEmail = session.session?.user.email || "Staff Operator";
+      const { error } = await supabase.from("teams").update({
         checkedIn: !currentStatus,
-        checkedInAt: !currentStatus ? serverTimestamp() : null,
+        checkedInAt: !currentStatus ? new Date().toISOString() : null,
         checkedInBy: !currentStatus ? staffEmail : null
-      });
+      }).eq("id", teamId);
+      if (error) throw error;
     } catch (err) {
       console.error("Check-in permission/update blocked:", err);
     }
@@ -56,12 +57,14 @@ export default function AttendanceManager() {
   const authorizeCheckIn = async (teamId: string) => {
     setScanStatus("processing");
     try {
-      const staffEmail = auth.currentUser?.email || "Staff Operator";
-      await updateDoc(doc(db, "teams", teamId), {
+      const { data: session } = await supabase.auth.getSession();
+      const staffEmail = session.session?.user.email || "Staff Operator";
+      const { error } = await supabase.from("teams").update({
         checkedIn: true,
-        checkedInAt: serverTimestamp(),
+        checkedInAt: new Date().toISOString(),
         checkedInBy: staffEmail
-      });
+      }).eq("id", teamId);
+      if (error) throw error;
       setScanStatus("success");
       // Give visual feedback for 3 seconds, then clear scan card
       setTimeout(() => {

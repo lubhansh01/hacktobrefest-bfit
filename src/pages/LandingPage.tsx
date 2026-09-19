@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Link, useNavigate } from "react-router-dom";
-import { db, auth, googleProvider, handleFirestoreError, OperationType } from "../lib/firebase";
-import { User, signInWithPopup } from "firebase/auth";
-import { collection, getDocs, query, orderBy, onSnapshot, doc } from "firebase/firestore";
+import { supabase, subscribe, subscribeRow, signInWithGoogle, type User } from "../lib/supabase";
 import {
   Trophy,
   Cpu,
@@ -21,10 +19,9 @@ import {
   ArrowRight
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { EVENT_START, EVENT_DATES, EVENT_START_LABEL, EVENT_END_LABEL, eventPhase } from "../lib/event";
 
-/** Doors open 30 May 2026 09:00 IST, demos wrap 31 May 18:00 IST. Drives the countdown. */
-const EVENT_START = new Date("2026-05-30T09:00:00+05:30");
-const EVENT_END = new Date("2026-05-31T18:00:00+05:30");
+
 
 const trackIcons: Record<string, any> = {
   "EdTech": {
@@ -50,7 +47,7 @@ const trackIcons: Record<string, any> = {
   }
 };
 
-/** Firestore stores full track titles, so match the theme on a keyword. */
+/** Tracks are stored with full titles, so match the theme on a keyword. */
 const themeFor = (name: string = "") => {
   const key = Object.keys(trackIcons).find(k =>
     name.toLowerCase().includes(k.toLowerCase().split(" ")[0])
@@ -149,11 +146,12 @@ function Countdown() {
     return () => clearInterval(id);
   }, []);
 
+  const phase = eventPhase(now);
   const diff = EVENT_START.getTime() - now;
   // Past the start there is nothing to count down to — a frozen 00:00:00:00
   // reads as broken, so say what phase the event is actually in.
   if (diff <= 0) {
-    const live = now < EVENT_END.getTime();
+    const live = phase === "live";
     return (
       <div className="rounded-xl border border-white/10 bg-canvas/70 px-4 py-5 text-center">
         {live ? (
@@ -162,12 +160,12 @@ function Countdown() {
               <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" aria-hidden="true" />
               Hacking in progress
             </span>
-            <p className="text-white/45 text-[13px] mt-2">Wraps up 31 May 2026, 18:00 IST.</p>
+            <p className="text-white/45 text-[13px] mt-2">Wraps up {EVENT_END_LABEL}.</p>
           </>
         ) : (
           <>
             <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/45">Event concluded</span>
-            <p className="text-white/45 text-[13px] mt-2">Held 30&ndash;31 May 2026 at BFIT College, Dehradun.</p>
+            <p className="text-white/45 text-[13px] mt-2">Held {EVENT_DATES} at BFIT College, Dehradun.</p>
           </>
         )}
       </div>
@@ -184,7 +182,7 @@ function Countdown() {
   return (
     <div>
       {/* Exact deadline as text \u2014 the ticker is decoration layered on top of it. */}
-      <p className="sr-only">Event begins 30 May 2026 at 09:00 IST.</p>
+      <p className="sr-only">Event begins {EVENT_START_LABEL}.</p>
       <div className="grid grid-cols-4 gap-2 sm:gap-3" aria-hidden="true">
         {units.map((u) => (
           <div key={u.label} className="rounded-xl border border-white/10 bg-canvas/70 px-1 py-3 text-center">
@@ -240,63 +238,31 @@ export default function LandingPage({ user }: { user: User | null }) {
   const [eventLocation, setEventLocation] = useState<any>(null);
 
   useEffect(() => {
-    // Location
-    const unsubLocation = onSnapshot(doc(db, "location", "venue"), (snap) => {
-      if (snap.exists()) {
-        setEventLocation(snap.data());
-      }
-    }, (err) => handleFirestoreError(err, OperationType.GET, "location/venue"));
+    const unsubs = [
+      subscribeRow("location", "venue", (row) => row && setEventLocation(row)),
+      subscribe("rounds", setRounds, { orderBy: { column: "order" } }),
+      subscribe("partners", setPartners, { orderBy: { column: "order" } }),
+    ];
 
-    // Tracks
-    getDocs(collection(db, "tracks")).then(snap => {
-      setTracks(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-
-    // Event Team
-    getDocs(collection(db, "event_team")).then(snap => {
-      setEventTeam(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-
-    // Mentors
-    getDocs(collection(db, "mentors")).then(snap => {
-      setMentors(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-
-    // Rounds
-    const roundsQ = query(collection(db, "rounds"), orderBy("order", "asc"));
-    onSnapshot(roundsQ, (snap) => {
-      setRounds(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "rounds"));
-
-    // Partners
-    const partnersQ = query(collection(db, "partners"), orderBy("order", "asc"));
-    onSnapshot(partnersQ, (snap) => {
-      setPartners(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "partners"));
+    // One-shot reference data — no live updates needed on the landing page.
+    supabase.from("tracks").select("*").then(({ data }) => setTracks(data ?? []));
+    supabase.from("event_team").select("*").then(({ data }) => setEventTeam(data ?? []));
+    supabase.from("mentors").select("*").then(({ data }) => setMentors(data ?? []));
 
     setLoading(false);
 
-    return () => {
-      unsubLocation();
-    };
+    return () => unsubs.forEach((u) => u());
   }, []);
 
   const handleLogin = async () => {
     setIsLoggingIn(true);
     setLoginError(null);
     try {
-      await signInWithPopup(auth, googleProvider);
-      navigate("/dashboard");
-    } catch (error: any) {
-      if (error.code === 'auth/popup-blocked') {
-        setLoginError("Login popup was blocked. Please allow popups or open in a new tab.");
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        setLoginError("Login popup was closed before completion.");
-      } else {
-        setLoginError("Google authentication failed. Please try again.");
-        console.error("Login failed", error);
-      }
-    } finally {
+      // Redirects to Google, then back to /dashboard.
+      await signInWithGoogle(`${window.location.origin}/dashboard`);
+    } catch (error) {
+      setLoginError("Google authentication failed. Please try again.");
+      console.error("Login failed", error);
       setIsLoggingIn(false);
     }
   };
@@ -361,7 +327,7 @@ export default function LandingPage({ user }: { user: User | null }) {
                 <Calendar className="w-4 h-4 text-accent-400 shrink-0" aria-hidden="true" />
                 <div className="text-left">
                   <dt className="sr-only">Dates</dt>
-                  <dd className="text-sm font-medium text-white">30-31 May 2026</dd>
+                  <dd className="text-sm font-medium text-white">{EVENT_DATES}</dd>
                   <dd className="text-[11px] text-white/35">Start time sent by email</dd>
                 </div>
               </div>
@@ -429,7 +395,7 @@ export default function LandingPage({ user }: { user: User | null }) {
           >
             <div className="rounded-2xl border border-white/10 bg-surface/50 backdrop-blur-sm p-6">
               <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/35 mb-4">
-                {Date.now() < EVENT_START.getTime() ? "Kickoff in" : "Status"}
+                {eventPhase() === "upcoming" ? "Kickoff in" : "Status"}
               </p>
               <Countdown />
               <div className="mt-6 pt-5 border-t border-white/10 grid grid-cols-2 gap-4">
@@ -444,19 +410,20 @@ export default function LandingPage({ user }: { user: User | null }) {
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-5 rounded-2xl bg-white px-6 py-4">
+            <div className="flex items-center justify-center gap-4 sm:gap-5 rounded-2xl bg-white px-5 sm:px-6 py-4">
               <img
                 src="https://lh3.googleusercontent.com/d/18XbNtByUmIUI33wkX21UD4Bib_K6Cxru"
                 alt="Major League Hacking"
-                className="h-8 md:h-9 object-contain"
+                className="h-8 md:h-9 w-auto object-contain shrink-0"
                 referrerPolicy="no-referrer"
               />
-              <span className="h-7 w-px bg-black/10" aria-hidden="true" />
+              <span className="h-8 w-px bg-black/10 shrink-0" aria-hidden="true" />
               <img
-                src="https://lh3.googleusercontent.com/d/1FN1jqo85kvF9uty6toFoP6VsRUicgI9M"
-                alt="Build with AI"
-                className="h-8 md:h-9 object-contain"
-                referrerPolicy="no-referrer"
+                src="/optimaxin-logo.png"
+                alt="OptiMaxin Software Solutions Pvt. Ltd."
+                width={1276}
+                height={276}
+                className="h-6 md:h-7 w-auto object-contain min-w-0"
               />
             </div>
           </motion.div>

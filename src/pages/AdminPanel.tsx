@@ -1,24 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
-import { db, auth, handleFirestoreError, OperationType } from "../lib/firebase";
-import { 
-  collection, 
-  getDocs, 
-  doc, 
-  setDoc,
-  updateDoc, 
-  onSnapshot, 
-  query, 
-  orderBy, 
-  where,
-  addDoc, 
-  deleteDoc,
-  serverTimestamp,
-  arrayUnion,
-  arrayRemove,
-  deleteField,
-  writeBatch
-} from "firebase/firestore";
+import { supabase, subscribe, subscribeRow, withId, handleDbError, OperationType } from "../lib/supabase";
 import { 
   Users, 
   Layers, 
@@ -446,17 +428,16 @@ function MailManager() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const teamSnap = await getDocs(query(collection(db, "teams"), orderBy("name")));
-        const allTeams = teamSnap.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
-        // Only show qualified (approved) participants
-        const qualifiedTeams = allTeams.filter(t => t.status === 'approved');
-        setTeams(qualifiedTeams);
-        
-        const eventSnap = await getDocs(query(collection(db, "event_team"), orderBy("name")));
-        setEventTeam(eventSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const { data: allTeams } = await supabase
+          .from("teams").select("*").eq("status", "approved").order("name");
+        setTeams(allTeams ?? []);
+
+        const { data: eventRows } = await supabase
+          .from("event_team").select("*").order("name");
+        setEventTeam(withId(eventRows ?? []));
       } catch (err) {
         console.error("Failed to fetch mailing data", err);
-        handleFirestoreError(err, OperationType.LIST, "mailing_data_fetch");
+        handleDbError(err, OperationType.LIST, "mailing_data_fetch");
       }
     };
     fetchData();
@@ -964,19 +945,19 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
 
     try {
       const memberEmails = newTeam.members.map(m => m.email.toLowerCase().trim()).filter(e => !!e);
-      
+      const { data: session } = await supabase.auth.getSession();
+
       const teamData = {
         ...newTeam,
-        creatorUid: auth.currentUser?.uid,
+        creatorUid: session.session?.user.id ?? null,
         status: 'approved',
         currentRoundOrder: 1,
         isEliminated: false,
         memberEmails,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
       };
 
-      const docRef = await addDoc(collection(db, "teams"), teamData);
+      const { error: insertErr } = await supabase.from("teams").insert(teamData);
+      if (insertErr) throw insertErr;
 
       // Trigger status update email to ALL members
       fetch("/api/send-status-update", {
@@ -999,31 +980,26 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
         members: [{ name: "", email: "", phone: "", role: "Leader" }]
       });
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "teams");
+      handleDbError(err, OperationType.CREATE, "teams");
     }
   };
 
   useEffect(() => {
-    const unsubTracks = onSnapshot(collection(db, "tracks"), (snapshot) => {
-      setTracks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "tracks"));
-    const unsubProblems = onSnapshot(collection(db, "problems"), (snapshot) => {
-      setProblems(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "problems"));
+    const unsubTracks = subscribe("tracks", (snapshot) => {
+      setTracks(snapshot);
+    }, {}, (err) => handleDbError(err, OperationType.GET, "tracks"));
+    const unsubProblems = subscribe("problems", (snapshot) => {
+      setProblems(snapshot);
+    }, {}, (err) => handleDbError(err, OperationType.GET, "problems"));
 
-    const q = query(collection(db, "teams"), orderBy("createdAt", "desc"));
-    const unsubTeams = onSnapshot(q, (snapshot) => {
-      setTeams(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubTeams = subscribe("teams", (snapshot) => {
+      setTeams(snapshot);
       setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.LIST, "teams"));
+    }, { orderBy: { column: "createdAt", ascending: false } },
+       (err) => handleDbError(err, OperationType.LIST, "teams"));
 
-    const unsubReg = onSnapshot(doc(db, "config", "registration"), (docSnap) => {
-      if (docSnap.exists()) {
-        setRegistrationOpen(!!docSnap.data().open);
-      } else {
-        setRegistrationOpen(false);
-      }
-    });
+    const unsubReg = subscribeRow<{ data?: { open?: boolean } }>(
+      "config", "registration", (row) => setRegistrationOpen(!!row?.data?.open));
 
     return () => {
       unsubTracks();
@@ -1037,10 +1013,12 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
     if (!canEdit) return;
     setTogglingRegistration(true);
     try {
-      await setDoc(doc(db, "config", "registration"), {
-        open: !registrationOpen,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
+      const { error } = await supabase.from("config").upsert({
+        id: "registration",
+        data: { open: !registrationOpen },
+        updatedAt: new Date().toISOString()
+      });
+      if (error) throw error;
     } catch (err) {
       console.error("Failed to update registration state:", err);
     } finally {
@@ -1058,7 +1036,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
         updates.isEliminated = false;
       }
       
-      await updateDoc(doc(db, "teams", id), updates);
+      await supabase.from("teams").update(updates).eq("id", id);
 
       // Trigger status update email if approved or disapproved to ALL members
       if (status === 'approved' || status === 'disapproved') {
@@ -1073,7 +1051,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
         }).catch(err => console.error("Status email trigger failed:", err));
       }
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${id}`);
+      handleDbError(err, OperationType.UPDATE, `teams/${id}`);
     }
   };
 
@@ -1082,14 +1060,15 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
     try {
       const team = teams.find(t => t.id === id);
       if (team?.assignedMentorId) {
-        await updateDoc(doc(db, "mentors", team.assignedMentorId), {
-          assignedTeams: arrayRemove(id)
+        await supabase.rpc("mentor_remove_team", {
+          p_email: team.assignedMentorId,
+          p_team: id,
         });
       }
-      await deleteDoc(doc(db, "teams", id));
+      await supabase.from("teams").delete().eq("id", id);
       setDeletingId(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `teams/${id}`);
+      handleDbError(err, OperationType.DELETE, `teams/${id}`);
     }
   };
 
@@ -1596,40 +1575,40 @@ function TracksManager() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    return onSnapshot(collection(db, "tracks"), (snapshot) => {
-      setTracks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "tracks"));
+    return subscribe("tracks", (snapshot) => {
+      setTracks(snapshot);
+    }, {}, (err) => handleDbError(err, OperationType.GET, "tracks"));
   }, []);
 
   const addTrack = async () => {
     if (!newTrack.name) return;
     try {
-      await addDoc(collection(db, "tracks"), newTrack);
+      await supabase.from("tracks").insert(newTrack);
       setNewTrack({ name: "", description: "" });
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "tracks");
+      handleDbError(err, OperationType.CREATE, "tracks");
     }
   };
 
   const updateTrack = async () => {
     if (!editingTrack || !editingTrack.name) return;
     try {
-      await updateDoc(doc(db, "tracks", editingTrack.id), {
+      await supabase.from("tracks").update({
         name: editingTrack.name,
         description: editingTrack.description
-      });
+      }).eq("id", editingTrack.id);
       setEditingTrack(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `tracks/${editingTrack.id}`);
+      handleDbError(err, OperationType.UPDATE, `tracks/${editingTrack.id}`);
     }
   };
 
   const removeTrack = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "tracks", id));
+      await supabase.from("tracks").delete().eq("id", id);
       setDeletingId(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `tracks/${id}`);
+      handleDbError(err, OperationType.DELETE, `tracks/${id}`);
     }
   };
 
@@ -1640,7 +1619,7 @@ function TracksManager() {
         { name: "On-Demand Local Services", description: "AI for local economy" }
       ];
       for (const t of defaultTracks) {
-          await addDoc(collection(db, "tracks"), t);
+          await supabase.from("tracks").insert(t);
       }
   };
 
@@ -1749,12 +1728,12 @@ function ProblemsManager() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubTracks = onSnapshot(collection(db, "tracks"), (snapshot) => {
-      setTracks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "tracks"));
-    const unsubProblems = onSnapshot(collection(db, "problems"), (snapshot) => {
-      setProblems(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "problems"));
+    const unsubTracks = subscribe("tracks", (snapshot) => {
+      setTracks(snapshot);
+    }, {}, (err) => handleDbError(err, OperationType.GET, "tracks"));
+    const unsubProblems = subscribe("problems", (snapshot) => {
+      setProblems(snapshot);
+    }, {}, (err) => handleDbError(err, OperationType.GET, "problems"));
     return () => {
       unsubTracks();
       unsubProblems();
@@ -1764,33 +1743,33 @@ function ProblemsManager() {
   const addProblem = async () => {
     if (!newProblem.title || !newProblem.trackId) return;
     try {
-      await addDoc(collection(db, "problems"), newProblem);
+      await supabase.from("problems").insert(newProblem);
       setNewProblem({ trackId: "", title: "", description: "" });
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "problems");
+      handleDbError(err, OperationType.CREATE, "problems");
     }
   };
 
   const updateProblem = async () => {
     if (!editingProblem || !editingProblem.title || !editingProblem.trackId) return;
     try {
-      await updateDoc(doc(db, "problems", editingProblem.id), {
+      await supabase.from("problems").update({
         trackId: editingProblem.trackId,
         title: editingProblem.title,
         description: editingProblem.description
-      });
+      }).eq("id", editingProblem.id);
       setEditingProblem(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `problems/${editingProblem.id}`);
+      handleDbError(err, OperationType.UPDATE, `problems/${editingProblem.id}`);
     }
   };
 
   const removeProblem = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "problems", id));
+      await supabase.from("problems").delete().eq("id", id);
       setDeletingId(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `problems/${id}`);
+      handleDbError(err, OperationType.DELETE, `problems/${id}`);
     }
   };
 
@@ -1910,19 +1889,17 @@ function TimelineManager() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
-        const q = query(collection(db, "timeline"), orderBy("order", "asc"));
-        return onSnapshot(q, (snapshot) => {
-            setItems(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }, (err) => handleFirestoreError(err, OperationType.GET, "timeline"));
+        return subscribe("timeline", setItems, { orderBy: { column: "order" } },
+            (err) => handleDbError(err, OperationType.GET, "timeline"));
     }, []);
 
     const addItem = async () => {
         if (!newItem.event) return;
         try {
-            await addDoc(collection(db, "timeline"), newItem);
+            await supabase.from("timeline").insert(newItem);
             setNewItem({ event: "", time: "", description: "", day: "1", order: items.length });
         } catch (err) {
-            handleFirestoreError(err, OperationType.CREATE, "timeline");
+            handleDbError(err, OperationType.CREATE, "timeline");
         }
     };
 
@@ -1939,16 +1916,16 @@ function TimelineManager() {
         ];
 
         for (const item of defaults) {
-            await addDoc(collection(db, "timeline"), item);
+            await supabase.from("timeline").insert(item);
         }
     };
 
     const removeItem = async (id: string) => {
         try {
-            await deleteDoc(doc(db, "timeline", id));
+            await supabase.from("timeline").delete().eq("id", id);
             setDeletingId(null);
         } catch (err) {
-            handleFirestoreError(err, OperationType.DELETE, `timeline/${id}`);
+            handleDbError(err, OperationType.DELETE, `timeline/${id}`);
         }
     };
 
@@ -2054,19 +2031,17 @@ function RoundsManager() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
-        const q = query(collection(db, "rounds"), orderBy("order", "asc"));
-        return onSnapshot(q, (snapshot) => {
-            setRounds(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }, (err) => handleFirestoreError(err, OperationType.GET, "rounds"));
+        return subscribe("rounds", setRounds, { orderBy: { column: "order" } },
+            (err) => handleDbError(err, OperationType.GET, "rounds"));
     }, []);
 
     const addRound = async () => {
         if (!newRound.name) return;
         try {
-            await addDoc(collection(db, "rounds"), newRound);
+            await supabase.from("rounds").insert(newRound);
             setNewRound({ name: "", description: "", order: rounds.length, isActive: false });
         } catch (err) {
-            handleFirestoreError(err, OperationType.CREATE, "rounds");
+            handleDbError(err, OperationType.CREATE, "rounds");
         }
     };
 
@@ -2074,28 +2049,21 @@ function RoundsManager() {
         try {
             const nextState = !current;
             
-            // If activating, deactivate all others first
-            if (nextState) {
-                const batch = writeBatch(db);
-                rounds.forEach(r => {
-                    if (r.id !== id && r.isActive) {
-                        batch.update(doc(db, "rounds", r.id), { isActive: false });
-                    }
-                });
-                batch.update(doc(db, "rounds", id), { isActive: true });
-                await batch.commit();
-            } else {
-                await updateDoc(doc(db, "rounds", id), { isActive: false });
-            }
+            // Activating clears every other round in one statement.
+            const { error: toggleErr } = await supabase.rpc("set_active_round", {
+                p_round: id,
+                p_active: nextState,
+            });
+            if (toggleErr) throw toggleErr;
 
             // If round is activated, broadcast to all approved teams
             if (nextState) {
-                const q = query(collection(db, "teams"), 
-                    where("status", "==", "approved"), 
-                    where("isEliminated", "==", false)
-                );
-                const snap = await getDocs(q);
-                const allEmails = snap.docs.flatMap(doc => doc.data().memberEmails || []);
+                const { data: liveTeams } = await supabase
+                    .from("teams")
+                    .select("memberEmails")
+                    .eq("status", "approved")
+                    .eq("isEliminated", false);
+                const allEmails = (liveTeams ?? []).flatMap((t: any) => t.memberEmails || []);
                 
                 if (allEmails.length > 0) {
                     fetch("/api/send-round-activation", {
@@ -2110,16 +2078,16 @@ function RoundsManager() {
                 }
             }
         } catch (err) {
-            handleFirestoreError(err, OperationType.UPDATE, `rounds/${id}`);
+            handleDbError(err, OperationType.UPDATE, `rounds/${id}`);
         }
     };
 
     const removeRound = async (id: string) => {
         try {
-            await deleteDoc(doc(db, "rounds", id));
+            await supabase.from("rounds").delete().eq("id", id);
             setDeletingId(null);
         } catch (err) {
-            handleFirestoreError(err, OperationType.DELETE, `rounds/${id}`);
+            handleDbError(err, OperationType.DELETE, `rounds/${id}`);
         }
     };
 
@@ -2133,7 +2101,7 @@ function RoundsManager() {
         { name: "Final Demo & Pitch", description: "Solution presentation and live demo.", order: 6, isActive: false }
       ];
       for (const r of defaultRounds) {
-          await addDoc(collection(db, "rounds"), r);
+          await supabase.from("rounds").insert(r);
       }
     };
 
@@ -2220,15 +2188,15 @@ function EliminationManager() {
   const [gateNote, setGateNote] = useState("");
 
   useEffect(() => {
-    const unsubRounds = onSnapshot(query(collection(db, "rounds"), orderBy("order", "asc")), (snap) => {
-      const r = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const unsubRounds = subscribe("rounds", (snap) => {
+      const r = snap;
       setRounds(r);
       if (!activeRound && r.length > 0) setActiveRound(r.find((round: any) => round.isActive) || r[r.length - 1]);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "rounds"));
-    const unsubTeams = onSnapshot(query(collection(db, "teams"), where("status", "==", "approved")), (snap) => {
-      setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, { orderBy: { column: "order" } }, (err) => handleDbError(err, OperationType.GET, "rounds"));
+    const unsubTeams = subscribe("teams", (snap) => {
+      setTeams(snap);
       setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "teams"));
+    }, { eq: { column: "status", value: "approved" } }, (err) => handleDbError(err, OperationType.GET, "teams"));
     return () => { unsubRounds(); unsubTeams(); };
   }, [activeRound]);
 
@@ -2256,7 +2224,7 @@ function EliminationManager() {
         updates.roundEvaluations = evals;
       }
 
-      await updateDoc(doc(db, "teams", team.id), updates);
+      await supabase.from("teams").update(updates).eq("id", team.id);
 
       fetch("/api/send-qualification-update", {
         method: "POST",
@@ -2276,7 +2244,7 @@ function EliminationManager() {
       setGateMarks(0);
       setGateNote("");
     } catch (err) { 
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${team.id}`); 
+      handleDbError(err, OperationType.UPDATE, `teams/${team.id}`); 
     }
   };
 
@@ -2290,9 +2258,9 @@ function EliminationManager() {
         updates.currentRoundOrder = activeRound.order;
       }
       
-      await updateDoc(doc(db, "teams", team.id), updates);
+      await supabase.from("teams").update(updates).eq("id", team.id);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${team.id}`);
+      handleDbError(err, OperationType.UPDATE, `teams/${team.id}`);
     }
   };
 
@@ -2491,15 +2459,15 @@ function EvaluationManager() {
   const [comments, setComments] = useState("");
 
   useEffect(() => {
-    const unsubRounds = onSnapshot(query(collection(db, "rounds"), orderBy("order", "asc")), (snap) => {
-      const r = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const unsubRounds = subscribe("rounds", (snap) => {
+      const r = snap;
       setRounds(r);
       if (!activeRound && r.length > 0) setActiveRound(r.find((round: any) => round.isActive) || r[0]);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "rounds"));
-    const unsubTeams = onSnapshot(query(collection(db, "teams"), where("status", "==", "approved")), (snap) => {
-      setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, { orderBy: { column: "order" } }, (err) => handleDbError(err, OperationType.GET, "rounds"));
+    const unsubTeams = subscribe("teams", (snap) => {
+      setTeams(snap);
       setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "teams"));
+    }, { eq: { column: "status", value: "approved" } }, (err) => handleDbError(err, OperationType.GET, "teams"));
     return () => {
       unsubRounds();
       unsubTeams();
@@ -2516,10 +2484,10 @@ function EvaluationManager() {
         comments,
         updatedAt: new Date()
       };
-      await updateDoc(doc(db, "teams", teamId), { roundEvaluations: evals });
+      await supabase.from("teams").update({ roundEvaluations: evals }).eq("id", teamId);
       setEvaluating(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${teamId}`);
+      handleDbError(err, OperationType.UPDATE, `teams/${teamId}`);
     }
   };
 
@@ -2729,10 +2697,10 @@ function EventTeamManager() {
   const [notificationStatus, setNotificationStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "event_team"), (snap) => {
-      setMembers(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsub = subscribe("event_team", (snap) => {
+      setMembers(snap);
       setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "event_team"));
+    }, {}, (err) => handleDbError(err, OperationType.GET, "event_team"));
     return () => unsub();
   }, []);
 
@@ -2742,17 +2710,15 @@ function EventTeamManager() {
 
     try {
       const cleanEmail = newMember.email.trim().toLowerCase();
-      const memberRef = doc(db, "event_team", cleanEmail);
       const processedPhoto = getImageUrl(newMember.photo);
 
-      await setDoc(memberRef, {
+      await supabase.from("event_team").upsert({
         name: newMember.name,
         email: cleanEmail,
         designation: newMember.designation,
         company: newMember.company,
         photo: processedPhoto,
         permissions: newMember.permissions,
-        createdAt: serverTimestamp()
       });
 
       // Notify event team member via API
@@ -2805,7 +2771,7 @@ function EventTeamManager() {
       });
       setTimeout(() => setNotificationStatus(null), 5000);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "event_team");
+      handleDbError(err, OperationType.CREATE, "event_team");
     }
   };
 
@@ -2815,31 +2781,31 @@ function EventTeamManager() {
 
     try {
       const processedPhoto = getImageUrl(editingMember.photo);
-      await updateDoc(doc(db, "event_team", editingMember.id), {
+      await supabase.from("event_team").update({
         name: editingMember.name,
         designation: editingMember.designation,
         company: editingMember.company,
         photo: processedPhoto,
         permissions: editingMember.permissions
-      });
+      }).eq("email", editingMember.id);
 
       setEditingMember(null);
       setNotificationStatus({ type: 'success', message: 'Team member profile updated.' });
       setTimeout(() => setNotificationStatus(null), 5000);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `event_team/${editingMember.id}`);
+      handleDbError(err, OperationType.UPDATE, `event_team/${editingMember.id}`);
     }
   };
 
   const confirmDeleteMember = async () => {
     if (!deletingMember) return;
     try {
-      await deleteDoc(doc(db, "event_team", deletingMember.id));
+      await supabase.from("event_team").delete().eq("email", deletingMember.id);
       setDeletingMember(null);
       setNotificationStatus({ type: 'success', message: 'Team member removed.' });
       setTimeout(() => setNotificationStatus(null), 5000);
     } catch (err: any) {
-      handleFirestoreError(err, OperationType.DELETE, `event_team/${deletingMember.id}`);
+      handleDbError(err, OperationType.DELETE, `event_team/${deletingMember.id}`);
     }
   };
 
@@ -3026,20 +2992,20 @@ function MentorsManager() {
   const [notificationStatus, setNotificationStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   useEffect(() => {
-    const unsubMentors = onSnapshot(collection(db, "mentors"), (snap) => {
-      setMentors(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubMentors = subscribe("mentors", (snap) => {
+      setMentors(snap);
       setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "mentors"));
-    const unsubTeams = onSnapshot(collection(db, "teams"), (snap) => {
-      setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "teams"));
+    }, {}, (err) => handleDbError(err, OperationType.GET, "mentors"));
+    const unsubTeams = subscribe("teams", (snap) => {
+      setTeams(snap);
+    }, {}, (err) => handleDbError(err, OperationType.GET, "teams"));
     
     // Fetch tracks and problems for ID mapping
-    const unsubTracks = onSnapshot(collection(db, "tracks"), (snap) => {
-      setTracks(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubTracks = subscribe("tracks", (snap) => {
+      setTracks(snap);
     });
-    const unsubProblems = onSnapshot(collection(db, "problems"), (snap) => {
-      setProblems(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubProblems = subscribe("problems", (snap) => {
+      setProblems(snap);
     });
 
     return () => { unsubMentors(); unsubTeams(); unsubTracks(); unsubProblems(); };
@@ -3054,18 +3020,15 @@ function MentorsManager() {
 
     try {
       const cleanEmail = newMentor.email.trim().toLowerCase();
-      const mentorRef = doc(db, "mentors", cleanEmail);
-      
       const processedPhoto = getImageUrl(newMentor.photo);
 
-      await setDoc(mentorRef, {
+      await supabase.from("mentors").upsert({
         name: newMentor.name,
         email: cleanEmail,
         designation: newMentor.designation,
         company: newMentor.company,
         photo: processedPhoto,
         assignedTeams: [],
-        createdAt: serverTimestamp()
       });
 
       // Notify event team member via API
@@ -3098,7 +3061,7 @@ function MentorsManager() {
       // Auto-clear notification after 5 seconds
       setTimeout(() => setNotificationStatus(null), 5000);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "mentors");
+      handleDbError(err, OperationType.CREATE, "mentors");
     }
   };
 
@@ -3111,24 +3074,23 @@ function MentorsManager() {
 
       // Clean up previous assignment if exists
       if (team.assignedMentorId && team.assignedMentorId !== mentorId) {
-        await updateDoc(doc(db, "mentors", team.assignedMentorId), {
-          assignedTeams: arrayRemove(teamId)
+        await supabase.rpc("mentor_remove_team", {
+          p_email: team.assignedMentorId,
+          p_team: teamId,
         });
       }
 
       // Update mentor
-      await updateDoc(doc(db, "mentors", mentorId), {
-        assignedTeams: arrayUnion(teamId)
-      });
+      await supabase.rpc("mentor_add_team", { p_email: mentorId, p_team: teamId });
 
       // Update team
-      await updateDoc(doc(db, "teams", teamId), {
+      await supabase.from("teams").update({
         assignedMentorId: mentorId,
         assignedMentorName: mentor.name,
         assignedMentorEmail: mentor.email,
         assignedMentorDesignation: mentor.designation || '',
         assignedMentorCompany: mentor.company || ''
-      });
+      }).eq("id", teamId);
 
       setAssigningTo(null);
 
@@ -3155,24 +3117,22 @@ function MentorsManager() {
         })
       }).catch(e => console.error("Assignment notification failed:", e));
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `mentors/${mentorId}`);
+      handleDbError(err, OperationType.UPDATE, `mentors/${mentorId}`);
     }
   };
 
   const unassignTeam = async (mentorId: string, teamId: string) => {
     try {
-      await updateDoc(doc(db, "mentors", mentorId), {
-        assignedTeams: arrayRemove(teamId)
-      });
-      await updateDoc(doc(db, "teams", teamId), {
-        assignedMentorId: deleteField(),
-        assignedMentorName: deleteField(),
-        assignedMentorEmail: deleteField(),
-        assignedMentorDesignation: deleteField(),
-        assignedMentorCompany: deleteField()
-      });
+      await supabase.rpc("mentor_remove_team", { p_email: mentorId, p_team: teamId });
+      await supabase.from("teams").update({
+        assignedMentorId: null,
+        assignedMentorName: null,
+        assignedMentorEmail: null,
+        assignedMentorDesignation: null,
+        assignedMentorCompany: null
+      }).eq("id", teamId);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${teamId}`);
+      handleDbError(err, OperationType.UPDATE, `teams/${teamId}`);
     }
   };
 
@@ -3183,18 +3143,20 @@ function MentorsManager() {
       // Unassign teams
       if (deletingMentor.assignedTeams && Array.isArray(deletingMentor.assignedTeams)) {
         const unassignPromises = deletingMentor.assignedTeams.map((teamId: string) => 
-          updateDoc(doc(db, "teams", teamId), {
+          supabase.from("teams").update({
             assignedMentorName: null,
             assignedMentorEmail: null,
             assignedMentorId: null,
             assignedMentorDesignation: null,
             assignedMentorCompany: null
-          }).catch(e => console.warn(`Unassign failed for team ${teamId}:`, e))
+          }).eq("id", teamId).then(({ error }) => {
+            if (error) console.warn(`Unassign failed for team ${teamId}:`, error);
+          })
         );
         await Promise.all(unassignPromises);
       }
 
-      await deleteDoc(doc(db, "mentors", deletingMentor.id));
+      await supabase.from("mentors").delete().eq("email", deletingMentor.id);
       setDeletingMentor(null);
       setNotificationStatus({ type: 'success', message: 'Mentor profile terminated.' });
       setTimeout(() => setNotificationStatus(null), 5000);
@@ -3241,21 +3203,21 @@ function MentorsManager() {
 
     try {
       const processedPhoto = getImageUrl(editingMentor.photo);
-      await updateDoc(doc(db, "mentors", editingMentor.id), {
+      await supabase.from("mentors").update({
         name: editingMentor.name,
         designation: editingMentor.designation,
         company: editingMentor.company,
         photo: processedPhoto
-      });
+      }).eq("email", editingMentor.id);
 
       // Also update team references if profile changed
       if (editingMentor.assignedTeams && editingMentor.assignedTeams.length > 0) {
         for (const teamId of editingMentor.assignedTeams) {
-          await updateDoc(doc(db, "teams", teamId), {
+          await supabase.from("teams").update({
             assignedMentorName: editingMentor.name,
             assignedMentorDesignation: editingMentor.designation || '',
             assignedMentorCompany: editingMentor.company || ''
-          });
+          }).eq("id", teamId);
         }
       }
 
@@ -3263,7 +3225,7 @@ function MentorsManager() {
       setNotificationStatus({ type: 'success', message: 'Mentor profile updated.' });
       setTimeout(() => setNotificationStatus(null), 5000);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `mentors/${editingMentor.id}`);
+      handleDbError(err, OperationType.UPDATE, `mentors/${editingMentor.id}`);
     }
   };
 
@@ -3729,26 +3691,22 @@ function SpeakersManager() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const q = query(collection(db, "speakers"), orderBy("createdAt", "desc"));
-    return onSnapshot(q, (snapshot) => {
-      setSpeakers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, "speakers");
-    });
+    return subscribe("speakers", setSpeakers,
+      { orderBy: { column: "createdAt", ascending: false } },
+      (error) => handleDbError(error, OperationType.GET, "speakers"));
   }, []);
 
   const addSpeaker = async () => {
     if (!newSpeaker.name) return;
     try {
       const processedPhoto = getImageUrl(newSpeaker.photo);
-      await addDoc(collection(db, "speakers"), {
+      await supabase.from("speakers").insert({
         ...newSpeaker,
-        photo: processedPhoto,
-        createdAt: serverTimestamp()
+        photo: processedPhoto
       });
       setNewSpeaker({ name: "", role: "", company: "", photo: "" });
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "speakers");
+      handleDbError(err, OperationType.CREATE, "speakers");
     }
   };
 
@@ -3756,24 +3714,24 @@ function SpeakersManager() {
     if (!editingSpeaker || !editingSpeaker.name) return;
     try {
       const processedPhoto = getImageUrl(editingSpeaker.photo);
-      await updateDoc(doc(db, "speakers", editingSpeaker.id), {
+      await supabase.from("speakers").update({
         name: editingSpeaker.name,
         role: editingSpeaker.role,
         company: editingSpeaker.company,
         photo: processedPhoto
-      });
+      }).eq("id", editingSpeaker.id);
       setEditingSpeaker(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `speakers/${editingSpeaker.id}`);
+      handleDbError(err, OperationType.UPDATE, `speakers/${editingSpeaker.id}`);
     }
   };
 
   const removeSpeaker = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "speakers", id));
+      await supabase.from("speakers").delete().eq("id", id);
       setDeletingId(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `speakers/${id}`);
+      handleDbError(err, OperationType.DELETE, `speakers/${id}`);
     }
   };
 
@@ -3784,7 +3742,7 @@ function SpeakersManager() {
       { name: "Jensen Huang", role: "Visual Compute Lead", company: "NVIDIA", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&h=300&fit=crop" }
     ];
     for (const s of defaults) {
-      await addDoc(collection(db, "speakers"), { ...s, createdAt: serverTimestamp() });
+      await supabase.from("speakers").insert(s);
     }
   };
 
@@ -3967,48 +3925,44 @@ function PartnersManager() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const q = query(collection(db, "partners"), orderBy("order", "asc"));
-    return onSnapshot(q, (snapshot) => {
-      setPartners(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, "partners");
-    });
+    return subscribe("partners", setPartners, { orderBy: { column: "order" } },
+      (error) => handleDbError(error, OperationType.GET, "partners"));
   }, []);
 
   const addPartner = async () => {
     if (!newPartner.name) return;
     try {
-      await addDoc(collection(db, "partners"), {
+      await supabase.from("partners").insert({
         ...newPartner,
         order: Number(newPartner.order)
       });
       setNewPartner({ name: "", tier: "", logo: "", order: partners.length + 1 });
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "partners");
+      handleDbError(err, OperationType.CREATE, "partners");
     }
   };
 
   const updatePartner = async () => {
     if (!editingPartner || !editingPartner.name) return;
     try {
-      await updateDoc(doc(db, "partners", editingPartner.id), {
+      await supabase.from("partners").update({
         name: editingPartner.name,
         tier: editingPartner.tier,
         logo: editingPartner.logo || "",
         order: Number(editingPartner.order)
-      });
+      }).eq("id", editingPartner.id);
       setEditingPartner(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `partners/${editingPartner.id}`);
+      handleDbError(err, OperationType.UPDATE, `partners/${editingPartner.id}`);
     }
   };
 
   const removePartner = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "partners", id));
+      await supabase.from("partners").delete().eq("id", id);
       setDeletingId(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `partners/${id}`);
+      handleDbError(err, OperationType.DELETE, `partners/${id}`);
     }
   };
 
@@ -4023,9 +3977,7 @@ function PartnersManager() {
       { name: "MISTRAL", tier: "LLM PARTNER", order: 7 },
       { name: "VERCEL", tier: "EDGE PARTNER", order: 8 }
     ];
-    for (const p of defaults) {
-      await addDoc(collection(db, "partners"), p);
-    }
+    await supabase.from("partners").insert(defaults as any[]);
   };
 
   return (
@@ -4152,31 +4104,32 @@ function LocationManager() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    return onSnapshot(doc(db, "location", "venue"), (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        setLocation({ id: snap.id, ...data });
-        setEditData({ 
-          name: data.name || '', 
-          address: data.address || '', 
-          city: data.city || '', 
-          mapUrl: data.mapUrl || '' 
+    return subscribeRow<any>("location", "venue", (row) => {
+      if (row) {
+        setLocation(row);
+        setEditData({
+          name: row.name || '',
+          address: row.address || '',
+          city: row.city || '',
+          mapUrl: row.mapUrl || ''
         });
       }
       setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.GET, "location/venue"));
+    });
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await setDoc(doc(db, "location", "venue"), {
+      const { error } = await supabase.from("location").upsert({
+        id: "venue",
         ...editData,
-        updatedAt: serverTimestamp()
+        updatedAt: new Date().toISOString()
       });
+      if (error) throw error;
     } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, "location/venue");
+      handleDbError(err, OperationType.WRITE, "location/venue");
     } finally {
       setSaving(false);
     }
@@ -4780,26 +4733,21 @@ function GuestManager() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const q = query(collection(db, "guests"), orderBy("order", "asc"));
-    return onSnapshot(q, (snapshot) => {
-      setGuests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, "guests");
-    });
+    return subscribe("guests", setGuests, { orderBy: { column: "order" } },
+      (error) => handleDbError(error, OperationType.GET, "guests"));
   }, []);
 
   const addGuest = async () => {
     if (!newGuest.name) return;
     try {
       const processedPhoto = getImageUrl(newGuest.photo);
-      await addDoc(collection(db, "guests"), {
+      await supabase.from("guests").insert({
         ...newGuest,
-        photo: processedPhoto,
-        createdAt: serverTimestamp()
+        photo: processedPhoto
       });
       setNewGuest({ name: "", position: "", photo: "", order: guests.length + 1 });
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, "guests");
+      handleDbError(err, OperationType.CREATE, "guests");
     }
   };
 
@@ -4807,24 +4755,24 @@ function GuestManager() {
     if (!editingGuest || !editingGuest.name) return;
     try {
       const processedPhoto = getImageUrl(editingGuest.photo);
-      await updateDoc(doc(db, "guests", editingGuest.id), {
+      await supabase.from("guests").update({
         name: editingGuest.name,
         position: editingGuest.position,
         photo: processedPhoto,
         order: Number(editingGuest.order)
-      });
+      }).eq("id", editingGuest.id);
       setEditingGuest(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `guests/${editingGuest.id}`);
+      handleDbError(err, OperationType.UPDATE, `guests/${editingGuest.id}`);
     }
   };
 
   const removeGuest = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "guests", id));
+      await supabase.from("guests").delete().eq("id", id);
       setDeletingId(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `guests/${id}`);
+      handleDbError(err, OperationType.DELETE, `guests/${id}`);
     }
   };
 

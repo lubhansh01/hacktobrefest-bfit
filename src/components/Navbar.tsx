@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { auth, googleProvider } from "../lib/firebase";
-import { signInWithPopup, signOut, User } from "firebase/auth";
+import { signInWithGoogle, signOut, displayName, photoURL, type User } from "../lib/supabase";
 import { cn } from "../lib/utils";
 import { Menu, X, LogIn, ShieldCheck, LayoutDashboard, UserCheck, Terminal } from "lucide-react";
 
@@ -24,21 +23,19 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
 
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error: any) {
-      if (error.code === 'auth/popup-blocked') {
-        alert("The login popup was blocked by your browser. Please allow popups for this site or try opening the app in a new tab using the icon in the top right.");
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        // Silently capture since the user closed the window on purpose
-        console.log("Authentication popup closed by user.");
-      } else {
-        console.error("Login failed", error);
-      }
+      // Redirects to Google and returns to the current page.
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Login failed", error);
     }
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Sign out failed", error);
+    }
     navigate("/");
   };
 
@@ -108,9 +105,9 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
 
             {user ? (
               <div className="flex items-center gap-3 border-l border-white/10 pl-6">
-                <img src={user.photoURL || ""} alt="" className="w-8 h-8 rounded-full border border-white/15 object-cover" />
+                <img src={photoURL(user)} alt="" className="w-8 h-8 rounded-full border border-white/15 object-cover" />
                 <div className="flex flex-col items-start">
-                  <span className="text-[12px] font-medium truncate max-w-[110px] leading-tight">{user.displayName}</span>
+                  <span className="text-[12px] font-medium truncate max-w-[110px] leading-tight">{displayName(user)}</span>
                   <button onClick={handleLogout} className="text-[11px] text-white/35 hover:text-red-400 transition-colors leading-tight">
                     Sign out
                   </button>

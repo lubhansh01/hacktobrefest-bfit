@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { User } from "firebase/auth";
-import { db, auth, googleProvider, handleFirestoreError, OperationType } from "../lib/firebase";
-import { signInWithPopup } from "firebase/auth";
-import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, onSnapshot } from "firebase/firestore";
+import { supabase, subscribeRow, signInWithGoogle, displayName, type User } from "../lib/supabase";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   ArrowLeft, 
@@ -16,6 +13,7 @@ import {
   Lock
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { EVENT_DATES } from "../lib/event";
 
 export default function RegistrationPage({ user }: { user: User | null }) {
   const [searchParams] = useSearchParams();
@@ -41,32 +39,31 @@ export default function RegistrationPage({ user }: { user: User | null }) {
   const [registrationsOpen, setRegistrationsOpen] = useState(false);
 
   useEffect(() => {
-    const unsubReg = onSnapshot(doc(db, "config", "registration"), (docSnap) => {
-      const open = docSnap.exists() ? !!docSnap.data().open : false;
+    const unsubReg = subscribeRow<{ data?: { open?: boolean } }>("config", "registration", (row) => {
+      const open = !!row?.data?.open;
       setRegistrationsOpen(open);
-      
+
       if (!open) {
         setFetching(false);
-      } else {
-        const fetchEventData = async () => {
-          try {
-            const tracksSnap = await getDocs(collection(db, "tracks"));
-            const problemsSnap = await getDocs(collection(db, "problems"));
-            
-            setTracks(tracksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            setAllProblems(problemsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-          } catch (err) {
-            console.error("Failed to fetch event data", err);
-          } finally {
-            setFetching(false);
-          }
-        };
-
-        fetchEventData();
+        return;
       }
-    }, (err) => {
-      console.error("Failed to listen to registration status", err);
-      setFetching(false);
+
+      const fetchEventData = async () => {
+        try {
+          const [{ data: trackRows }, { data: problemRows }] = await Promise.all([
+            supabase.from("tracks").select("*"),
+            supabase.from("problems").select("*"),
+          ]);
+          setTracks(trackRows ?? []);
+          setAllProblems(problemRows ?? []);
+        } catch (err) {
+          console.error("Failed to fetch event data", err);
+        } finally {
+          setFetching(false);
+        }
+      };
+
+      fetchEventData();
     });
 
     return () => unsubReg();
@@ -116,21 +113,18 @@ export default function RegistrationPage({ user }: { user: User | null }) {
       const allEmails = members.map(m => m.email.toLowerCase().trim());
       const allPhones = members.map(m => m.phone.trim());
 
-      const teamsRef = collection(db, "teams");
-
-      // Check if any email already exists
-      const emailQuery = query(teamsRef, where("memberEmails", "array-contains-any", allEmails));
-      const emailSnap = await getDocs(emailQuery);
-      if (!emailSnap.empty) {
+      // overlaps() is the array-contains-any equivalent: true if the arrays share any element.
+      const { data: emailClash } = await supabase
+        .from("teams").select("id").overlaps("memberEmails", allEmails).limit(1);
+      if (emailClash && emailClash.length > 0) {
           setError("One or more team members are already registered with this email. A member can only register once.");
           setLoading(false);
           return;
       }
 
-      // Check if any phone already exists
-      const phoneQuery = query(teamsRef, where("memberPhones", "array-contains-any", allPhones));
-      const phoneSnap = await getDocs(phoneQuery);
-      if (!phoneSnap.empty) {
+      const { data: phoneClash } = await supabase
+        .from("teams").select("id").overlaps("memberPhones", allPhones).limit(1);
+      if (phoneClash && phoneClash.length > 0) {
           setError("One or more team members are already registered with this phone number. A member can only register once.");
           setLoading(false);
           return;
@@ -149,11 +143,12 @@ export default function RegistrationPage({ user }: { user: User | null }) {
         status: 'pending',
         currentRoundOrder: 0,
         isEliminated: false,
-        creatorUid: user.uid,
-        createdAt: serverTimestamp()
+        creatorUid: user.id,
+        creatorEmail: user.email,
       };
 
-      await addDoc(collection(db, "teams"), teamData);
+      const { error: insertErr } = await supabase.from("teams").insert(teamData);
+      if (insertErr) throw insertErr;
       
       // Trigger background confirmation email for leader
       fetch("/api/send-confirmation", {
@@ -161,7 +156,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: contactEmail.trim().toLowerCase(),
-          name: members[0].name || user.displayName || "Participant",
+          name: members[0].name || displayName(user) || "Participant",
           teamName: teamName
         })
       }).catch(err => console.error("Email trigger failed:", err));
@@ -173,7 +168,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                  leaderName: members[0].name || user.displayName || "Your Leader",
+                  leaderName: members[0].name || displayName(user) || "Your Leader",
                   teamName: teamName,
                   members: otherMembers
               })
@@ -269,7 +264,7 @@ export default function RegistrationPage({ user }: { user: User | null }) {
           transition={{ delay: 0.3 }}
           className="text-[10px] uppercase tracking-widest text-white/45"
         >
-          Event Schedule: 30-31 May, 2026
+          Event Schedule: {EVENT_DATES}
         </motion.p>
       </div>
     );
@@ -278,13 +273,10 @@ export default function RegistrationPage({ user }: { user: User | null }) {
   const handleLogin = async () => {
     setError(null);
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (err: any) {
-      if (err.code === 'auth/popup-blocked') {
-        setError("Login popup was blocked. Please allow popups or use a different browser.");
-      } else {
-        setError("Identity check failed. Please try logging in again.");
-      }
+      await signInWithGoogle();
+    } catch (err) {
+      console.error("Login failed", err);
+      setError("Identity check failed. Please try logging in again.");
     }
   };
 

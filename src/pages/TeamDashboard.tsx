@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
-import { User, signInWithPopup } from "firebase/auth";
+
 import { Link, useNavigate } from "react-router-dom";
-import { db, auth, googleProvider, handleFirestoreError, OperationType } from "../lib/firebase";
-import { 
-  collection, 
-  query, 
-  where, 
-  getDocs, 
-  doc, 
-  updateDoc, 
-  onSnapshot 
-} from "firebase/firestore";
+import {
+  supabase,
+  subscribe,
+  signInWithGoogle,
+  handleDbError,
+  OperationType,
+  type User,
+} from "../lib/supabase";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Trophy, 
@@ -83,48 +81,29 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
       return;
     }
 
-    // Fetch Rounds
-    const roundsRef = collection(db, "rounds");
-    const unsubRounds = onSnapshot(roundsRef, (snap) => {
-      const r = snap.docs.map(d => ({ id: d.id, ...d.data() } as Round));
-      setRounds(r.sort((a, b) => a.order - b.order));
-    }, (err) => handleFirestoreError(err, OperationType.GET, "rounds"));
+    const unsubs = [
+      subscribe<Round>("rounds", (rows) => setRounds([...rows].sort((a, b) => a.order - b.order))),
+      subscribe("tracks", setTracks),
+      subscribe("problems", setProblems),
+      // The team this user is a member of: memberEmails is a text[] column.
+      subscribe<Team>(
+        "teams",
+        (rows) => {
+          setTeam(rows[0] ?? null);
+          setLoading(false);
+        },
+        {
+          eq: { column: "status", value: "approved" },
+          refine: (q) => q.contains("memberEmails", [user.email]),
+        },
+        (err) => {
+          handleDbError(err, OperationType.LIST, "teams");
+          setLoading(false);
+        }
+      ),
+    ];
 
-    // Fetch Tracks
-    const unsubTracks = onSnapshot(collection(db, "tracks"), (snap) => {
-      setTracks(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
-
-    // Fetch Problems
-    const unsubProblems = onSnapshot(collection(db, "problems"), (snap) => {
-      setProblems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
-
-    // Fetch User's Team
-    const teamsRef = collection(db, "teams");
-    const q = query(
-      teamsRef, 
-      where("memberEmails", "array-contains", user.email),
-      where("status", "==", "approved")
-    );
-    
-    const unsubTeam = onSnapshot(q, (snap) => {
-      if (!snap.empty) {
-        const teamDoc = snap.docs[0];
-        const data = teamDoc.data() as Team;
-        setTeam({ ...data, id: teamDoc.id });
-      } else {
-        setTeam(null);
-      }
-      setLoading(false);
-    }, (err) => handleFirestoreError(err, OperationType.LIST, "teams"));
-
-    return () => {
-      unsubRounds();
-      unsubTracks();
-      unsubProblems();
-      unsubTeam();
-    };
+    return () => unsubs.forEach((u) => u());
   }, [user, isAdmin, isMentor]);
 
   // Pre-fill workDone when team or active round changes
@@ -149,9 +128,10 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
 
   const formatTimestamp = (ts: any) => {
     if (!ts) return "Never";
-    if (ts.seconds) return new Date(ts.seconds * 1000).toLocaleString();
     if (ts instanceof Date) return ts.toLocaleString();
-    return "Unknown";
+    // Postgres hands back ISO strings.
+    const parsed = new Date(ts);
+    return isNaN(parsed.getTime()) ? "Unknown" : parsed.toLocaleString();
   };
 
   const handleSubmitWork = async () => {
@@ -167,9 +147,11 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
     };
 
     try {
-      await updateDoc(doc(db, "teams", team.id), {
-        roundSubmissions: submissions
-      });
+      const { error: updateErr } = await supabase
+        .from("teams")
+        .update({ roundSubmissions: submissions })
+        .eq("id", team.id);
+      if (updateErr) throw updateErr;
       
       // Trigger confirmation email for the submission
       if (user?.email) {
@@ -187,7 +169,7 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
 
       setMessage({ type: 'success', text: "Progress successfully synced to the grid." });
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${team.id}`);
+      console.error("Submission failed:", err);
       setMessage({ type: 'error', text: "Failed to transmit progress. Check your connection." });
     } finally {
       setSubmitting(false);
@@ -221,16 +203,10 @@ export default function TeamDashboard({ user, isAdmin, isMentor }: { user: User 
           onClick={async () => {
             setAuthError(null);
             try {
-              await signInWithPopup(auth, googleProvider);
-            } catch (err: any) {
-              if (err.code === 'auth/popup-blocked') {
-                setAuthError("The login popup was blocked by your browser. Please allow popups or try again in a new tab.");
-              } else if (err.code === 'auth/popup-closed-by-user') {
-                setAuthError("Login popup was closed before completion.");
-              } else {
-                setAuthError("Google authentication failed. Please try again.");
-                console.error("Popup authentication failed:", err);
-              }
+              await signInWithGoogle();
+            } catch (err) {
+              setAuthError("Google authentication failed. Please try again.");
+              console.error("Authentication failed:", err);
             }
           }}
           className="px-10 py-5 bg-accent-600 text-white font-black uppercase text-xs tracking-widest rounded-full hover:bg-accent-500 transition-all shadow-[0_10px_30px_rgba(34,197,94,0.3)] active:scale-95"

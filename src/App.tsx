@@ -5,9 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth, db } from "./lib/firebase";
-import { doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from "firebase/firestore";
+import { supabase, type User } from "./lib/supabase";
 import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import RegistrationPage from "./pages/RegistrationPage";
@@ -17,6 +15,7 @@ import TeamDashboard from "./pages/TeamDashboard";
 import CheckInPage from "./pages/CheckInPage";
 import Navbar from "./components/Navbar";
 import { Loader2 } from "lucide-react";
+import { EVENT_DATES } from "./lib/event";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -26,100 +25,43 @@ export default function App() {
   const [permissions, setPermissions] = useState<any>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      try {
-        setUser(authUser);
-        if (authUser) {
-          // Determine Role Strategy
-          let finalRole = "user";
-          let userPermissions: any = {};
-          const adminEmail = "lubhanshsharma555@gmail.com";
-          const cleanEmail = authUser.email?.toLowerCase().trim();
-
-          // Pre-fetch user document for role sync
-          const userDoc = await getDoc(doc(db, "users", authUser.uid));
-
-          // 1. Hardcoded Admin Support (Super Admin)
-          if (authUser.email === adminEmail) {
-            finalRole = "admin";
-            userPermissions = {
-              manage_teams: true,
-              manage_mentors: true,
-              manage_rounds: true,
-              manage_tracks: true,
-              manage_timeline: true,
-              manage_speakers: true,
-              manage_partners: true,
-              manage_event_team: true,
-              manage_location: true,
-              manage_email_marketing: true,
-              manage_guests: true,
-              view_teams: true,
-              manage_attendance: true
-            };
-          } else {
-            // 2. Dynamic Source of Truth Check (Priority over cached profile)
-            if (cleanEmail) {
-              // Check Event Team (Primary management role)
-              const teamDoc = await getDoc(doc(db, "event_team", cleanEmail));
-              if (teamDoc.exists()) {
-                finalRole = "event_team";
-                userPermissions = teamDoc.data().permissions || {};
-              } else {
-                // Check Mentors
-                const mentorDoc = await getDoc(doc(db, "mentors", cleanEmail));
-                if (mentorDoc.exists()) {
-                  finalRole = "mentor";
-                } else if (userDoc.exists()) {
-                  // Fallback to cached role if no source of truth found
-                  finalRole = userDoc.data().role || "user";
-                  userPermissions = userDoc.data().permissions || {};
-                }
-              }
-            } else if (userDoc.exists()) {
-              finalRole = userDoc.data().role || "user";
-              userPermissions = userDoc.data().permissions || {};
-            }
-          }
-
-          // Update State
-          setIsAdmin(finalRole === "admin" || finalRole === "event_team");
-          setIsMentor(finalRole === "mentor");
-          setPermissions(userPermissions);
-
-          // Sync back to users collection for record keeping and secondary auth
-          if (!userDoc.exists() || 
-              userDoc.data().role !== finalRole || 
-              JSON.stringify(userDoc.data().permissions || {}) !== JSON.stringify(userPermissions)) {
-            try {
-              await setDoc(doc(db, "users", authUser.uid), {
-                email: authUser.email,
-                role: finalRole,
-                permissions: userPermissions,
-                uid: authUser.uid,
-                name: authUser.displayName,
-                displayName: authUser.displayName,
-                photoURL: authUser.photoURL,
-                updatedAt: serverTimestamp()
-              }, { merge: true });
-            } catch (syncErr) {
-              console.warn("Role sync encountered a non-critical block:", syncErr);
-            }
-          }
-        } else {
-          setIsAdmin(false);
-          setIsMentor(false);
-          setPermissions(null);
-          setUser(null);
-        }
-      } catch (globalErr) {
-        console.error("Global auth state error:", globalErr);
-      } finally {
-        setLoading(false);
+    // The server derives role + permissions from event_team / mentors and
+    // writes the profile row; the client just reads the answer back.
+    const applySession = async (authUser: User | null) => {
+      setUser(authUser);
+      if (!authUser) {
+        setIsAdmin(false);
+        setIsMentor(false);
+        setPermissions(null);
+        return;
       }
+      try {
+        const { data, error } = await supabase.rpc("sync_my_profile");
+        if (error) throw error;
+        const profile = Array.isArray(data) ? data[0] : data;
+        const role = profile?.role ?? "user";
+        setIsAdmin(role === "admin" || role === "event_team");
+        setIsMentor(role === "mentor");
+        setPermissions(profile?.permissions ?? {});
+      } catch (err) {
+        console.error("Role sync failed:", err);
+        setIsAdmin(false);
+        setIsMentor(false);
+        setPermissions({});
+      }
+    };
+
+    supabase.auth
+      .getSession()
+      .then(({ data }) => applySession(data.session?.user ?? null))
+      .catch((err) => console.error("Session load failed:", err))
+      .finally(() => setLoading(false));
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      applySession(session?.user ?? null);
     });
 
-    return () => unsubscribe();
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   if (loading) {
@@ -169,7 +111,7 @@ export default function App() {
             <div>
               <h2 className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/35 mb-4">When &amp; where</h2>
               <ul className="space-y-2.5 text-sm text-white/60">
-                <li>30&ndash;31 May 2026</li>
+                <li>{EVENT_DATES}</li>
                 <li>BFIT College, Dehradun</li>
                 <li className="text-white/35 text-[13px]">Start time announced by email</li>
               </ul>

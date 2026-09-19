@@ -1,17 +1,7 @@
 import { useState, useEffect } from "react";
-import { User } from "firebase/auth";
+
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
-import { 
-  collection, 
-  query, 
-  where, 
-  onSnapshot, 
-  doc, 
-  updateDoc, 
-  orderBy,
-  getDocs
-} from "firebase/firestore";
+import { supabase, subscribe, handleDbError, OperationType, type User } from "../lib/supabase";
 import { 
   Users, 
   Star, 
@@ -111,15 +101,16 @@ function AssignedTeams({ user }: { user: User }) {
           return;
         }
 
-        const tSnap = await getDocs(collection(db, "tracks"));
-        setTracks(tSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        const { data: trackRows } = await supabase.from("tracks").select("*");
+        setTracks(trackRows ?? []);
 
-        const q = query(collection(db, "teams"), where("assignedMentorEmail", "==", cleanEmail));
-        unsubTeams = onSnapshot(q, 
-          (snap) => {
-            setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        unsubTeams = subscribe(
+          "teams",
+          (rows) => {
+            setTeams(rows);
             setLoading(false);
           },
+          { eq: { column: "assignedMentorEmail", value: cleanEmail } },
           (err) => {
             console.error("AssignedTeams listener error:", err);
             setLoading(false);
@@ -136,7 +127,7 @@ function AssignedTeams({ user }: { user: User }) {
     return () => {
       if (unsubTeams) unsubTeams();
     };
-  }, [user.uid, user.email]);
+  }, [user.id, user.email]);
 
   if (loading) return <div className="p-20 flex justify-center"><Loader2 className="animate-spin text-accent-500" /></div>;
 
@@ -222,9 +213,9 @@ function MentorEvaluationManager({ user }: { user: User }) {
           return;
         }
 
-        unsubRounds = onSnapshot(query(collection(db, "rounds"), orderBy("order", "asc")), 
-          (snap) => {
-            const r = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        unsubRounds = subscribe(
+          "rounds",
+          (r: any[]) => {
             setRounds(r);
             // Pick the active round with the highest order if multiple exist
             const active = [...r].reverse().find((round: any) => round.isActive);
@@ -234,27 +225,32 @@ function MentorEvaluationManager({ user }: { user: User }) {
               setActiveRound((prev: any) => prev || r[0]);
             }
           },
+          { orderBy: { column: "order" } },
           (err) => {
             console.error("Evaluation rounds listener error:", err);
             setLoading(false);
           }
         );
 
-        unsubTeams = onSnapshot(query(collection(db, "teams"), where("assignedMentorEmail", "==", cleanEmail)), 
-          (snap) => {
-            setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        unsubTeams = subscribe(
+          "teams",
+          (rows) => {
+            setTeams(rows);
             setLoading(false);
           },
+          { eq: { column: "assignedMentorEmail", value: cleanEmail } },
           (err) => {
             console.error("Evaluation teams listener error:", err);
             setLoading(false);
           }
         );
 
-        const tracksSnap = await getDocs(collection(db, "tracks"));
-        setTracks(tracksSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-        const problemsSnap = await getDocs(collection(db, "problems"));
-        setProblems(problemsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        const [{ data: trackRows }, { data: problemRows }] = await Promise.all([
+          supabase.from("tracks").select("*"),
+          supabase.from("problems").select("*"),
+        ]);
+        setTracks(trackRows ?? []);
+        setProblems(problemRows ?? []);
       } catch (err) {
         console.error("Error setting up evaluation listeners:", err);
         setLoading(false);
@@ -267,7 +263,7 @@ function MentorEvaluationManager({ user }: { user: User }) {
       if (unsubRounds) unsubRounds();
       if (unsubTeams) unsubTeams();
     };
-  }, [user.uid, user.email]);
+  }, [user.id, user.email]);
 
   const saveEvaluation = async (teamId: string) => {
     if (!activeRound) return;
@@ -279,10 +275,12 @@ function MentorEvaluationManager({ user }: { user: User }) {
         comments,
         updatedAt: new Date()
       };
-      await updateDoc(doc(db, "teams", teamId), { roundEvaluations: evals });
+      const { error: evalErr } = await supabase
+        .from("teams").update({ roundEvaluations: evals }).eq("id", teamId);
+      if (evalErr) throw evalErr;
       setEvaluating(null);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${teamId}`);
+      handleDbError(err, OperationType.UPDATE, `teams/${teamId}`);
     }
   };
 
@@ -525,9 +523,9 @@ function MentorEliminationManager({ user }: { user: User }) {
           return;
         }
 
-        unsubRounds = onSnapshot(query(collection(db, "rounds"), orderBy("order", "asc")), 
-          (snap) => {
-            const r = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        unsubRounds = subscribe(
+          "rounds",
+          (r: any[]) => {
             setRounds(r);
             // Pick the active round with the highest order if multiple exist
             const active = [...r].reverse().find((round: any) => round.isActive);
@@ -537,17 +535,20 @@ function MentorEliminationManager({ user }: { user: User }) {
               setActiveRound((prev: any) => prev || r[0]);
             }
           },
+          { orderBy: { column: "order" } },
           (err) => {
             console.error("Elimination rounds listener error:", err);
             setLoading(false);
           }
         );
 
-        unsubTeams = onSnapshot(query(collection(db, "teams"), where("assignedMentorEmail", "==", cleanEmail)), 
-          (snap) => {
-            setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        unsubTeams = subscribe(
+          "teams",
+          (rows) => {
+            setTeams(rows);
             setLoading(false);
           },
+          { eq: { column: "assignedMentorEmail", value: cleanEmail } },
           (err) => {
             console.error("Elimination teams listener error:", err);
             setLoading(false);
@@ -565,7 +566,7 @@ function MentorEliminationManager({ user }: { user: User }) {
       if (unsubRounds) unsubRounds();
       if (unsubTeams) unsubTeams();
     };
-  }, [user.uid, user.email]);
+  }, [user.id, user.email]);
 
   const processTeam = async (team: any) => {
     if (!processingStatus) return;
@@ -590,7 +591,10 @@ function MentorEliminationManager({ user }: { user: User }) {
         updates.roundEvaluations = evals;
       }
 
-      await updateDoc(doc(db, "teams", team.id), updates);
+      {
+        const { error: updErr } = await supabase.from("teams").update(updates).eq("id", team.id);
+        if (updErr) throw updErr;
+      }
 
       fetch("/api/send-qualification-update", {
         method: "POST",
@@ -610,7 +614,7 @@ function MentorEliminationManager({ user }: { user: User }) {
       setGateMarks(0);
       setGateNote("");
     } catch (err) { 
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${team.id}`); 
+      handleDbError(err, OperationType.UPDATE, `teams/${team.id}`); 
     }
   };
 
@@ -620,9 +624,12 @@ function MentorEliminationManager({ user }: { user: User }) {
         isEliminated: false,
         currentRoundOrder: activeRound?.order || team.currentRoundOrder
       };
-      await updateDoc(doc(db, "teams", team.id), updates);
+      {
+        const { error: updErr } = await supabase.from("teams").update(updates).eq("id", team.id);
+        if (updErr) throw updErr;
+      }
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `teams/${team.id}`);
+      handleDbError(err, OperationType.UPDATE, `teams/${team.id}`);
     }
   };
 
@@ -812,16 +819,16 @@ function MentorMailManager({ user }: { user: User }) {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const q = query(collection(db, "teams"), where("assignedMentorEmail", "==", user.email));
-        const snap = await getDocs(q);
-        setTeams(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const { data: snapRows } = await supabase
+          .from("teams").select("*").eq("assignedMentorEmail", user.email);
+        setTeams(snapRows ?? []);
       } catch (err) {
         console.error("Error fetching teams for mail:", err);
       }
     };
 
     fetchTeams();
-  }, [user.uid, user.email]);
+  }, [user.id, user.email]);
 
   const toggleTeam = (id: string) => {
     setSelectedTeams(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]);

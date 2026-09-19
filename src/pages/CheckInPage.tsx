@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { doc, getDoc, updateDoc, serverTimestamp, collection, getDocs } from "firebase/firestore";
-import { db, auth } from "../lib/firebase";
+import { supabase } from "../lib/supabase";
 import { Shield, CheckCircle, Clock, Users, ArrowLeft, Loader2, Award, MapPin } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -24,12 +23,14 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
     if (!teamId) return;
     setLoading(true);
     try {
-      const tracksSnap = await getDocs(collection(db, "tracks"));
-      setTracks(tracksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const { data: trackRows } = await supabase.from("tracks").select("*");
+      setTracks(trackRows ?? []);
 
-      const docSnap = await getDoc(doc(db, "teams", teamId));
-      if (docSnap.exists()) {
-        setTeam({ id: docSnap.id, ...docSnap.data() });
+      const { data: teamRow, error: teamErr } = await supabase
+        .from("teams").select("*").eq("id", teamId).maybeSingle();
+      if (teamErr) throw teamErr;
+      if (teamRow) {
+        setTeam(teamRow);
         setError(null);
       } else {
         setError("Invalid Pass: Team credential matching failed. This ticket does not exist in our systems.");
@@ -51,18 +52,17 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
     setCheckingIn(true);
     setMessage(null);
     try {
-      const staffEmail = auth.currentUser?.email || "Staff Operator";
-      await updateDoc(doc(db, "teams", teamId), {
-        checkedIn: true,
-        checkedInAt: serverTimestamp(),
-        checkedInBy: staffEmail
-      });
+      const { data: session } = await supabase.auth.getSession();
+      const staffEmail = session.session?.user.email || "Staff Operator";
+      const { data: updated, error: updateErr } = await supabase
+        .from("teams")
+        .update({ checkedIn: true, checkedInAt: new Date().toISOString(), checkedInBy: staffEmail })
+        .eq("id", teamId)
+        .select()
+        .maybeSingle();
+      if (updateErr) throw updateErr;
       setMessage("ENTRY SECURED: Venue access successfully authorized.");
-      // Reload team state
-      const updatedSnap = await getDoc(doc(db, "teams", teamId));
-      if (updatedSnap.exists()) {
-        setTeam({ id: updatedSnap.id, ...updatedSnap.data() });
-      }
+      if (updated) setTeam(updated);
     } catch (err: any) {
       console.error(err);
       setError("Authorization Blocked: Update permission rejected.");

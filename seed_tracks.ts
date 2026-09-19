@@ -1,10 +1,18 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import * as fs from 'fs';
+/**
+ * Seeds the tracks table. Run with:
+ *   VITE_SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npx tsx seed_tracks.ts
+ * Uses the service role key so it bypasses RLS.
+ */
+import { createClient } from '@supabase/supabase-js';
 
-const firebaseConfig = JSON.parse(fs.readFileSync('./firebase-applet-config.json', 'utf8'));
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const url = process.env.VITE_SUPABASE_URL;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!url || !key) {
+  console.error('Set VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.');
+  process.exit(1);
+}
+
+const supabase = createClient(url, key);
 
 const tracks = [
   {
@@ -22,20 +30,20 @@ const tracks = [
 ];
 
 async function seed() {
-  const tracksCol = collection(db, 'tracks');
-  
-  // Clear existing
-  const snapshot = await getDocs(tracksCol);
-  for (const d of snapshot.docs) {
-    await deleteDoc(doc(db, 'tracks', d.id));
-  }
-  
-  // Add new
-  for (const track of tracks) {
-    await addDoc(tracksCol, track);
-    console.log(`Added track: ${track.name}`);
-  }
+  const { error: clearError } = await supabase
+    .from('tracks')
+    .delete()
+    .not('id', 'is', null);
+  if (clearError) throw clearError;
+
+  const { error } = await supabase.from('tracks').insert(tracks);
+  if (error) throw error;
+
+  tracks.forEach(t => console.log(`Added track: ${t.name}`));
   process.exit(0);
 }
 
-seed();
+seed().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
