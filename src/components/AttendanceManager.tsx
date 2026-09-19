@@ -264,12 +264,12 @@ export default function AttendanceManager() {
         {/* Real-time stats */}
         <div className="bg-white/5 border border-white/10 rounded-3xl p-4 flex gap-6 items-center">
           <div className="text-center px-2">
-            <div className="text-[9px] font-black uppercase tracking-wider text-green-500 opacity-60">VERIFIED ENTRY</div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-green-500 opacity-60">VERIFIED ENTRY</div>
             <div className="text-xl font-black italic mt-1">{checkedInCount} <span className="text-xs text-white/30">/ {totalApproved}</span></div>
           </div>
           <div className="w-[1px] h-8 bg-white/10" />
           <div className="text-center px-2">
-            <div className="text-[9px] font-black uppercase tracking-wider text-accent-500 opacity-60">PENDING AT DOOR</div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-accent-500 opacity-60">PENDING AT DOOR</div>
             <div className="text-xl font-black italic mt-1">{pendingCount}</div>
           </div>
           <div className="w-[1px] h-8 bg-white/10" />
@@ -287,7 +287,7 @@ export default function AttendanceManager() {
             : "bg-red-500/10 border-red-500/20 text-red-500"
         )}>
           <span>{actionStatus.message}</span>
-          <button onClick={() => setActionStatus(null)} className="text-white/40 hover:text-white transition-colors cursor-pointer text-[10px] font-black uppercase">
+          <button onClick={() => setActionStatus(null)} className="text-white/40 hover:text-white transition-colors cursor-pointer text-[11px] font-black uppercase">
             [Dismiss]
           </button>
         </div>
@@ -298,7 +298,7 @@ export default function AttendanceManager() {
         <div className="space-y-6">
           <div className="bg-white/[0.03] border border-white/10 rounded-[32px] p-6 text-center space-y-6">
             <div className="flex justify-between items-center">
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/30">LOBBY TERMINAL</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-white/30">LOBBY TERMINAL</span>
               <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
             </div>
 
@@ -313,7 +313,7 @@ export default function AttendanceManager() {
                   </div>
                   <div>
                     <h4 className="text-xs font-black uppercase text-white/70 tracking-widest leading-none mt-2">Scanner Offline</h4>
-                    <p className="text-[9px] text-white/30 font-bold mt-1 max-w-[150px] uppercase tracking-wide">Ready for contactless verification</p>
+                    <p className="text-[10px] text-white/30 font-bold mt-1 max-w-[150px] uppercase tracking-wide">Ready for contactless verification</p>
                   </div>
                 </div>
               )}
@@ -323,14 +323,14 @@ export default function AttendanceManager() {
             {scanning ? (
               <button
                 onClick={stopScanner}
-                className="w-full py-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 font-black uppercase tracking-widest text-[10px] rounded-xl transition-all"
+                className="w-full py-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 font-black uppercase tracking-widest text-[11px] rounded-xl transition-all"
               >
                 Abort Scan Operations
               </button>
             ) : (
               <button
                 onClick={startScanner}
-                className="w-full py-4 bg-white text-black hover:bg-accent-500 hover:scale-[1.02] active:scale-[0.98] font-black uppercase tracking-widest text-[10px] rounded-xl transition-all flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(255,255,255,0.05)]"
+                className="w-full py-4 bg-white text-black hover:bg-accent-500 hover:scale-[1.02] active:scale-[0.98] font-black uppercase tracking-widest text-[11px] rounded-xl transition-all flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(255,255,255,0.05)]"
               >
                 <Camera className="w-3.5 h-3.5" /> Launch Input Camera
               </button>
@@ -345,9 +345,9 @@ export default function AttendanceManager() {
               scanStatus === "error" ? "bg-red-500/10 border-red-500/30" : "bg-white/5 border-white/10 animate-pulse"
             )}>
               <div className="flex justify-between items-center">
-                <span className="text-[9px] font-black uppercase tracking-widest text-white/40">SCANNED PACKET RECEIVED</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">SCANNED PACKET RECEIVED</span>
                 <span className={cn(
-                  "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
+                  "text-[10px] font-black uppercase px-2 py-0.5 rounded-full border",
                   scanStatus === "success" ? "bg-green-500/10 border-green-500/20 text-green-400" :
                   scanStatus === "error" ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-accent-500/10 border-accent-500/20 text-accent-400"
                 )}>
@@ -359,15 +359,15 @@ export default function AttendanceManager() {
                 <div className="space-y-3">
                   <div>
                     <h3 className="text-xl font-black uppercase tracking-tighter italic text-white leading-none">{scannedTeam.name}</h3>
-                    <p className="text-[9px] font-mono text-white/30 uppercase mt-1">HASH: {scannedTeam.id.substring(0, 15).toUpperCase()}...</p>
+                    <p className="text-[10px] font-mono text-white/30 uppercase mt-1">HASH: {scannedTeam.id.substring(0, 15).toUpperCase()}...</p>
                   </div>
                   
                   <div className="p-3 bg-black/40 rounded-xl space-y-1 border border-white/5">
-                    <div className="flex justify-between text-[11px] font-bold">
+                    <div className="flex justify-between text-[12px] font-bold">
                       <span className="text-white/30 uppercase tracking-widest">SQUAD ORIGIN</span>
                       <span className="text-accent-500 uppercase">{scannedTeam.city || "DEHRADUN"}</span>
                     </div>
-                    <div className="flex justify-between text-[11px] font-bold">
+                    <div className="flex justify-between text-[12px] font-bold">
                       <span className="text-white/30 uppercase tracking-widest">CREW SIZE</span>
                       <span className="text-white">{scannedTeam.memberEmails ? scannedTeam.memberEmails.length : 1} MEMBERS</span>
                     </div>
@@ -376,10 +376,10 @@ export default function AttendanceManager() {
                   {scanStatus === "processing" ? (
                     <div className="text-center py-2">
                       <Loader2 className="w-5 h-5 text-accent-400 animate-spin mx-auto mb-1" />
-                      <span className="text-[8px] uppercase tracking-widest text-white/30 font-black">Authorizing Security Clearances...</span>
+                      <span className="text-[9px] uppercase tracking-widest text-white/30 font-black">Authorizing Security Clearances...</span>
                     </div>
                   ) : scanStatus === "success" ? (
-                    <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] uppercase font-black tracking-widest text-center rounded-xl flex items-center justify-center gap-2">
+                    <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-400 text-[11px] uppercase font-black tracking-widest text-center rounded-xl flex items-center justify-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-400" /> ENTRY GRANTED
                     </div>
                   ) : null}
@@ -388,7 +388,7 @@ export default function AttendanceManager() {
                 <div className="space-y-1 text-center py-2">
                   <Ban className="w-6 h-6 text-red-500 mx-auto opacity-60 mb-1" />
                   <p className="text-xs font-black uppercase text-red-500 tracking-tight">Access Protocol Rejected</p>
-                  <p className="text-[9px] text-white/30 font-bold max-w-[200px] mx-auto uppercase">Scanned packet does not match any approved squad in database</p>
+                  <p className="text-[10px] text-white/30 font-bold max-w-[200px] mx-auto uppercase">Scanned packet does not match any approved squad in database</p>
                 </div>
               )}
             </div>
@@ -426,11 +426,11 @@ export default function AttendanceManager() {
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="font-black uppercase tracking-tight italic text-base leading-none text-white">{t.name}</h4>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">{t.id.substring(0, 8).toUpperCase()}</span>
+                        <span className="text-[9px] font-mono text-white/20 uppercase tracking-widest">{t.id.substring(0, 8).toUpperCase()}</span>
                       </div>
                       
                       {/* Subtitles details */}
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[10px] text-white/40 font-bold uppercase tracking-wider">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-white/40 font-bold uppercase tracking-wider">
                         <span className="text-accent-500/70">{t.city || "Dehradun"}</span>
                         <span className="text-white/15">•</span>
                         <span>{t.memberEmails ? t.memberEmails.length : 1} Members</span>
@@ -448,7 +448,7 @@ export default function AttendanceManager() {
                       <button
                         onClick={() => toggleCheckIn(t.id, !!t.checkedIn)}
                         className={cn(
-                          "px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5",
+                          "px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5",
                           t.checkedIn
                             ? "bg-green-500/10 border-green-500/20 text-green-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500 hover:content-['Ab']"
                             : "bg-accent-500/10 border-accent-500/20 text-accent-400 hover:bg-accent-500 hover:text-black hover:border-accent-500"
@@ -482,7 +482,7 @@ export default function AttendanceManager() {
                         ) : (
                           <Mail className="w-3.5 h-3.5 text-accent-500" />
                         )}
-                        <span className="hidden md:inline text-[9px] font-black uppercase tracking-widest pl-0.5">
+                        <span className="hidden md:inline text-[10px] font-black uppercase tracking-widest pl-0.5">
                           {sendingId === t.id ? "SENDING..." : "EMAIL QR"}
                         </span>
                       </button>

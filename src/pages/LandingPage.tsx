@@ -122,7 +122,7 @@ function useCursorGlow(enabled: boolean) {
 const Eyebrow = ({ children, tone = "accent" }: { children: ReactNode; tone?: "accent" | "info" }) => (
   <div className="flex items-center gap-3 mb-5">
     <span className={cn("w-1.5 h-1.5 rounded-full", tone === "accent" ? "bg-accent-400" : "bg-info-400")} />
-    <span className={cn("font-mono text-[11px] tracking-[0.25em] uppercase", tone === "accent" ? "text-accent-400" : "text-info-400")}>
+    <span className={cn("font-mono text-[12px] tracking-[0.25em] uppercase", tone === "accent" ? "text-accent-400" : "text-info-400")}>
       {children}
     </span>
   </div>
@@ -134,7 +134,7 @@ const SectionHead = ({ eyebrow, title, sub, tone }: { eyebrow: string; title: Re
       <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
       <h2 className="font-display text-4xl md:text-5xl font-bold leading-[1.05]">{title}</h2>
     </div>
-    {sub && <p className="max-w-sm text-white/50 text-[15px] leading-relaxed">{sub}</p>}
+    {sub && <p className="max-w-sm text-white/50 text-[16px] leading-relaxed">{sub}</p>}
   </div>
 );
 
@@ -156,16 +156,16 @@ function Countdown() {
       <div className="rounded-xl border border-white/10 bg-canvas/70 px-4 py-5 text-center">
         {live ? (
           <>
-            <span className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] uppercase text-accent-300">
+            <span className="inline-flex items-center gap-2 font-mono text-[12px] tracking-[0.2em] uppercase text-accent-300">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" aria-hidden="true" />
               Hacking in progress
             </span>
-            <p className="text-white/45 text-[13px] mt-2">Wraps up {EVENT_END_LABEL}.</p>
+            <p className="text-white/45 text-[14px] mt-2">Wraps up {EVENT_END_LABEL}.</p>
           </>
         ) : (
           <>
-            <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/45">Event concluded</span>
-            <p className="text-white/45 text-[13px] mt-2">Held {EVENT_DATES} at BFIT College, Dehradun.</p>
+            <span className="font-mono text-[12px] tracking-[0.2em] uppercase text-white/45">Event concluded</span>
+            <p className="text-white/45 text-[14px] mt-2">Held {EVENT_DATES} at BFIT College, Dehradun.</p>
           </>
         )}
       </div>
@@ -186,10 +186,10 @@ function Countdown() {
       <div className="grid grid-cols-4 gap-2 sm:gap-3" aria-hidden="true">
         {units.map((u) => (
           <div key={u.label} className="rounded-xl border border-white/10 bg-canvas/70 px-1 py-3 text-center">
-            <div className="font-mono nums text-2xl sm:text-[28px] font-bold text-white leading-none">
+            <div className="font-mono nums text-2xl sm:text-[30px] font-bold text-white leading-none">
               {String(u.value).padStart(2, "0")}
             </div>
-            <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-white/35 mt-1.5">{u.label}</div>
+            <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-white/35 mt-1.5">{u.label}</div>
           </div>
         ))}
       </div>
@@ -218,7 +218,7 @@ const PartnerLogo = ({ p }: { p: any; key?: any }) => {
       )}
       <div className="text-center min-w-0 w-full">
         <h3 className="font-display text-base font-bold text-white/85 group-hover:text-white transition-colors truncate">{p.name}</h3>
-        <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-accent-500/70 mt-1">{p.tier}</p>
+        <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-accent-500/70 mt-1">{p.tier}</p>
       </div>
     </div>
   );
@@ -303,7 +303,7 @@ export default function LandingPage({ user }: { user: User | null }) {
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-accent-500/25 bg-accent-500/8 px-3.5 py-1.5 mb-7 max-w-full">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-400 shrink-0" />
-              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-accent-300">
+              <span className="font-mono text-[11px] sm:text-[12px] tracking-[0.18em] uppercase text-accent-300">
                 Uttarakhand's Largest Hybrid Hackathon
               </span>
             </div>
@@ -328,7 +328,7 @@ export default function LandingPage({ user }: { user: User | null }) {
                 <div className="text-left">
                   <dt className="sr-only">Dates</dt>
                   <dd className="text-sm font-medium text-white">{EVENT_DATES}</dd>
-                  <dd className="text-[11px] text-white/35">Start time sent by email</dd>
+                  <dd className="text-[12px] text-white/35">Start time sent by email</dd>
                 </div>
               </div>
               <div className="flex items-center gap-2.5 min-w-0">
@@ -336,7 +336,7 @@ export default function LandingPage({ user }: { user: User | null }) {
                 <div className="text-left min-w-0">
                   <dt className="sr-only">Venue</dt>
                   <dd className="text-sm font-medium text-white break-words">{venue}</dd>
-                  <dd className="text-[11px] text-white/35">Uttarakhand, India</dd>
+                  <dd className="text-[12px] text-white/35">Uttarakhand, India</dd>
                 </div>
               </div>
             </dl>
@@ -374,13 +374,13 @@ export default function LandingPage({ user }: { user: User | null }) {
               </a>
             </div>
 
-            <p className="mt-4 inline-flex items-center gap-2 font-mono text-[11px] tracking-wide text-white/35">
+            <p className="mt-4 inline-flex items-center gap-2 font-mono text-[12px] tracking-wide text-white/35">
               <Lock className="w-3.5 h-3.5 text-accent-500/70" aria-hidden="true" />
               Registrations are closed
             </p>
 
             {loginError && (
-              <p role="alert" className="mt-5 text-[13px] text-rose-300 bg-rose-500/10 border border-rose-500/25 px-4 py-2.5 rounded-xl">
+              <p role="alert" className="mt-5 text-[14px] text-rose-300 bg-rose-500/10 border border-rose-500/25 px-4 py-2.5 rounded-xl">
                 {loginError}
               </p>
             )}
@@ -394,18 +394,18 @@ export default function LandingPage({ user }: { user: User | null }) {
             className="space-y-5 min-w-0"
           >
             <div className="rounded-2xl border border-white/10 bg-surface/50 backdrop-blur-sm p-6">
-              <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/35 mb-4">
+              <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-white/35 mb-4">
                 {eventPhase() === "upcoming" ? "Kickoff in" : "Status"}
               </p>
               <Countdown />
               <div className="mt-6 pt-5 border-t border-white/10 grid grid-cols-2 gap-4">
                 <div>
                   <div className="font-display text-2xl font-bold text-white nums">24<span className="text-accent-400">h</span></div>
-                  <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-white/35 mt-0.5">Build window</div>
+                  <div className="font-mono text-[11px] tracking-[0.15em] uppercase text-white/35 mt-0.5">Build window</div>
                 </div>
                 <div>
                   <div className="font-display text-2xl font-bold text-white nums">200<span className="text-accent-400">+</span></div>
-                  <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-white/35 mt-0.5">Teams</div>
+                  <div className="font-mono text-[11px] tracking-[0.15em] uppercase text-white/35 mt-0.5">Teams</div>
                 </div>
               </div>
             </div>
@@ -488,16 +488,16 @@ export default function LandingPage({ user }: { user: User | null }) {
                   <div className="mt-auto pt-5 border-t border-white/10">
                     {theme.problems?.length > 0 && (
                       <div className="space-y-2.5 mb-4">
-                        <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-white/30">Problem statements</p>
+                        <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/30">Problem statements</p>
                         {theme.problems.map((problem: string, k: number) => (
                           <div key={k} className="flex items-start gap-2.5">
                             <span className={cn("w-1 h-1 rounded-full mt-2 shrink-0", theme.color.replace('text-', 'bg-'))} />
-                            <span className="text-[13px] text-white/65 leading-snug">{problem}</span>
+                            <span className="text-[14px] text-white/65 leading-snug">{problem}</span>
                           </div>
                         ))}
                       </div>
                     )}
-                    <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-white/30">
+                    <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-white/30">
                       <Lock className="w-3 h-3" aria-hidden="true" /> Locked until kickoff
                     </p>
                   </div>
@@ -530,18 +530,18 @@ export default function LandingPage({ user }: { user: User | null }) {
                   className="relative rounded-2xl border border-white/10 bg-canvas/60 p-6 hover:border-accent-500/30 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <span className="font-mono nums text-[11px] tracking-[0.2em] text-accent-500/70">
+                    <span className="font-mono nums text-[12px] tracking-[0.2em] text-accent-500/70">
                       {String(order).padStart(2, '0')}
                     </span>
                     {round.isActive && (
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-500/12 border border-accent-500/25 px-2.5 py-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" aria-hidden="true" />
-                        <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-accent-300">Live</span>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent-300">Live</span>
                       </span>
                     )}
                   </div>
                   <h3 className="font-display text-lg font-bold mb-2">{name}</h3>
-                  <p className="text-white/45 text-[13px] leading-relaxed">{desc}</p>
+                  <p className="text-white/45 text-[14px] leading-relaxed">{desc}</p>
                 </motion.li>
               );
             })}
@@ -573,8 +573,8 @@ export default function LandingPage({ user }: { user: User | null }) {
                     : <div className="w-full h-full flex items-center justify-center"><UserCheck className="w-8 h-8 text-white/12" aria-hidden="true" /></div>}
                 </div>
                 <h3 className="font-display text-sm font-bold leading-tight mb-1.5">{mentor.name}</h3>
-                <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-info-400">{mentor.designation || 'Expert'}</p>
-                <p className="text-[11px] text-white/35 mt-0.5 truncate">{mentor.company}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-info-400">{mentor.designation || 'Expert'}</p>
+                <p className="text-[12px] text-white/35 mt-0.5 truncate">{mentor.company}</p>
               </motion.div>
             ))}
           </div>
@@ -610,7 +610,7 @@ export default function LandingPage({ user }: { user: User | null }) {
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-display text-sm font-bold leading-tight truncate">{member.name}</h3>
-                    <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-accent-400 mt-1 truncate">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent-400 mt-1 truncate">
                       {member.designation || 'Specialist'}
                     </p>
                   </div>
@@ -645,7 +645,7 @@ export default function LandingPage({ user }: { user: User | null }) {
             ].map((p) => (
               <div key={p.name} className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-surface/40 p-7">
                 <h3 className="font-display text-base font-bold text-white/35">{p.name}</h3>
-                <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-accent-500/40">{p.tier}</p>
+                <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-accent-500/40">{p.tier}</p>
               </div>
             ))
           )}
@@ -668,7 +668,7 @@ export default function LandingPage({ user }: { user: User | null }) {
             </p>
             <div className="flex flex-wrap justify-center gap-2.5">
               {["Swag & credits", "Internship roles", "24h build sprint", "MLH member event"].map((tag) => (
-                <span key={tag} className="rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-[12px] font-medium text-white/70">
+                <span key={tag} className="rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-[13px] font-medium text-white/70">
                   {tag}
                 </span>
               ))}

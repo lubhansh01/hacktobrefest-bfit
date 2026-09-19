@@ -44,7 +44,7 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
       to={to}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "relative text-[13px] font-medium tracking-wide transition-colors py-2",
+        "relative text-[14px] font-medium tracking-wide transition-colors py-2",
         active ? "text-white" : "text-white/55 hover:text-white"
       )}
     >
@@ -74,8 +74,8 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
               <Terminal className="w-[18px] h-[18px]" strokeWidth={2.5} aria-hidden="true" />
             </span>
             <span className="flex flex-col leading-none">
-              <span className="font-display font-bold text-[15px] tracking-tight">Hacktoberfest</span>
-              <span className="font-mono text-[9px] tracking-[0.22em] text-accent-400 uppercase">Dehradun</span>
+              <span className="font-display font-bold text-[16px] tracking-tight">Hacktoberfest</span>
+              <span className="font-mono text-[10px] tracking-[0.22em] text-accent-400 uppercase">Dehradun</span>
             </span>
           </Link>
 
@@ -85,19 +85,19 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
             {navLink("/#schedule", "Schedule", hash === "#schedule")}
             {navLink("/about", "About", pathname === "/about")}
             {isAdmin && (
-              <Link to="/admin" className="flex items-center gap-1.5 text-[13px] font-medium text-accent-400 hover:text-accent-300 transition-colors">
+              <Link to="/admin" className="flex items-center gap-1.5 text-[14px] font-medium text-accent-400 hover:text-accent-300 transition-colors">
                 <ShieldCheck className="w-4 h-4" aria-hidden="true" />
                 Admin
               </Link>
             )}
             {isMentor && (
-              <Link to="/mentor" className="flex items-center gap-1.5 text-[13px] font-medium text-info-400 hover:text-info-300 transition-colors">
+              <Link to="/mentor" className="flex items-center gap-1.5 text-[14px] font-medium text-info-400 hover:text-info-300 transition-colors">
                 <UserCheck className="w-4 h-4" aria-hidden="true" />
                 Mentor
               </Link>
             )}
             {user && !isAdmin && !isMentor && (
-              <Link to="/dashboard" className="flex items-center gap-1.5 text-[13px] font-medium text-white/55 hover:text-white transition-colors">
+              <Link to="/dashboard" className="flex items-center gap-1.5 text-[14px] font-medium text-white/55 hover:text-white transition-colors">
                 <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
                 Dashboard
               </Link>
@@ -107,8 +107,8 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
               <div className="flex items-center gap-3 border-l border-white/10 pl-6">
                 <img src={photoURL(user)} alt="" className="w-8 h-8 rounded-full border border-white/15 object-cover" />
                 <div className="flex flex-col items-start">
-                  <span className="text-[12px] font-medium truncate max-w-[110px] leading-tight">{displayName(user)}</span>
-                  <button onClick={handleLogout} className="text-[11px] text-white/35 hover:text-red-400 transition-colors leading-tight">
+                  <span className="text-[13px] font-medium truncate max-w-[110px] leading-tight">{displayName(user)}</span>
+                  <button onClick={handleLogout} className="text-[12px] text-white/35 hover:text-red-400 transition-colors leading-tight">
                     Sign out
                   </button>
                 </div>
@@ -116,7 +116,7 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
             ) : (
               <button
                 onClick={handleLogin}
-                className="flex items-center gap-2 px-4 h-9 bg-accent-500 text-black text-[13px] font-bold rounded-lg hover:bg-accent-400 transition-colors"
+                className="flex items-center gap-2 px-4 h-9 bg-accent-500 text-black text-[14px] font-bold rounded-lg hover:bg-accent-400 transition-colors"
               >
                 <LogIn className="w-4 h-4" aria-hidden="true" />
                 Sign in

@@ -75,7 +75,7 @@ export default function AdminPanel({ permissions }: { permissions: any }) {
       {/* Sidebar */}
       <aside className="w-72 border-r border-white/5 bg-black/40 backdrop-blur-md hidden lg:flex flex-col">
         <div className="p-8 pb-4">
-          <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/30 mb-8">Management Suite</p>
+          <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-white/30 mb-8">Management Suite</p>
           <nav className="space-y-2">
             {(hasPerm('manage_teams') || hasPerm('view_teams')) && <SidebarLink to="/admin/teams" icon={Users} label="Registered Teams" active={activeTab === "teams"} />}
             {hasPerm('manage_location') && <SidebarLink to="/admin/location" icon={MapPin} label="Event Location" active={activeTab === "location"} />}
@@ -99,9 +99,9 @@ export default function AdminPanel({ permissions }: { permissions: any }) {
             <div className="mt-8 p-6 bg-red-400/5 border border-red-400/10 rounded-2xl">
               <div className="flex items-center gap-2 text-red-400 mb-2">
                 <AlertTriangle className="w-3 h-3" />
-                <p className="text-[9px] font-black uppercase tracking-wider">Zero Clearance</p>
+                <p className="text-[10px] font-black uppercase tracking-wider">Zero Clearance</p>
               </div>
-              <p className="text-[10px] text-white/30 font-bold leading-relaxed">No specific modules have been authorized for your profile yet.</p>
+              <p className="text-[11px] text-white/30 font-bold leading-relaxed">No specific modules have been authorized for your profile yet.</p>
             </div>
           )}
         </div>
@@ -131,7 +131,7 @@ export default function AdminPanel({ permissions }: { permissions: any }) {
                 exit={{ opacity: 0, height: 0 }}
                 className="overflow-hidden mt-2 bg-black border border-white/10 rounded-2xl p-4 space-y-1 z-30 relative"
               >
-                <p className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/30 mb-3 pl-2">Management Suite</p>
+                <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/30 mb-3 pl-2">Management Suite</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {(hasPerm('manage_teams') || hasPerm('view_teams')) && (
                     <Link 
@@ -594,7 +594,7 @@ function MailManager() {
         <button 
           onClick={() => setRecipientMode('system')}
           className={cn(
-            "px-6 py-3 rounded-[32px] text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+            "px-6 py-3 rounded-[32px] text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
             recipientMode === 'system' ? "bg-white text-black font-black" : "text-white/30 hover:text-white"
           )}
         >
@@ -603,7 +603,7 @@ function MailManager() {
         <button 
           onClick={() => setRecipientMode('custom')}
           className={cn(
-            "px-6 py-3 rounded-[32px] text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+            "px-6 py-3 rounded-[32px] text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
             recipientMode === 'custom' ? "bg-white text-black font-black" : "text-white/30 hover:text-white"
           )}
         >
@@ -616,7 +616,7 @@ function MailManager() {
         {recipientMode === 'system' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <label className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 ml-1">Source Category</label>
+              <label className="text-[11px] uppercase font-black tracking-[0.2em] text-white/30 ml-1">Source Category</label>
               <div className="flex gap-2">
                 <button 
                   onClick={() => { setSystemCategory('teams'); setSelectedTargetId(""); setRecipientSearchQuery(""); setIsSelectOpen(false); }}
@@ -627,7 +627,7 @@ function MailManager() {
                 >
                   <Users className="w-5 h-5 mb-2 opacity-50 group-hover:opacity-100" />
                   <div className="text-xs font-black uppercase tracking-tighter italic">Squads (Teams)</div>
-                  <div className="text-[10px] opacity-40 font-bold uppercase tracking-widest mt-1">{teams.length} Qualified</div>
+                  <div className="text-[11px] opacity-40 font-bold uppercase tracking-widest mt-1">{teams.length} Qualified</div>
                 </button>
                 <button 
                   onClick={() => { setSystemCategory('event_team'); setSelectedTargetId(""); setRecipientSearchQuery(""); setIsSelectOpen(false); }}
@@ -638,13 +638,13 @@ function MailManager() {
                 >
                   <UserCheck className="w-5 h-5 mb-2 opacity-50 group-hover:opacity-100" />
                   <div className="text-xs font-black uppercase tracking-tighter italic">Event Team</div>
-                  <div className="text-[10px] opacity-40 font-bold uppercase tracking-widest mt-1">{eventTeam.length} Members</div>
+                  <div className="text-[11px] opacity-40 font-bold uppercase tracking-widest mt-1">{eventTeam.length} Members</div>
                 </button>
               </div>
             </div>
 
             <div className="space-y-3 relative">
-              <label className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 ml-1">Select Target Recipient</label>
+              <label className="text-[11px] uppercase font-black tracking-[0.2em] text-white/30 ml-1">Select Target Recipient</label>
               
               {isSelectOpen && (
                 <div 
@@ -789,13 +789,13 @@ function MailManager() {
                   </div>
                 )}
               </div>
-              <p className="text-[9px] text-white/20 uppercase font-bold tracking-widest ml-1 italic">Selecting a target locks in the communication pipe</p>
+              <p className="text-[10px] text-white/20 uppercase font-bold tracking-widest ml-1 italic">Selecting a target locks in the communication pipe</p>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-black/40 border border-white/10 rounded-[32px]">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-black text-white/30 ml-1">Recipient Name</label>
+              <label className="text-[11px] uppercase tracking-widest font-black text-white/30 ml-1">Recipient Name</label>
               <input 
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
@@ -804,7 +804,7 @@ function MailManager() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-black text-white/30 ml-1">Recipient Email</label>
+              <label className="text-[11px] uppercase tracking-widest font-black text-white/30 ml-1">Recipient Email</label>
               <input 
                 value={customEmail}
                 onChange={(e) => setCustomEmail(e.target.value)}
@@ -817,7 +817,7 @@ function MailManager() {
 
         <div className="space-y-6 pt-4 border-t border-white/5">
           <div className="space-y-2">
-            <label className="text-[10px] uppercase tracking-widest font-black text-white/30 ml-1">Email Subject</label>
+            <label className="text-[11px] uppercase tracking-widest font-black text-white/30 ml-1">Email Subject</label>
             <div className="relative">
               <input 
                 type="text" 
@@ -834,8 +834,8 @@ function MailManager() {
 
           <div className="space-y-2">
              <div className="flex justify-between items-center px-1">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/30">Message Content</label>
-                <span className="text-[8px] font-black uppercase text-white/10 tracking-[0.3em]">HTML Payload Enabled</span>
+                <label className="text-[11px] uppercase tracking-widest font-black text-white/30">Message Content</label>
+                <span className="text-[9px] font-black uppercase text-white/10 tracking-[0.3em]">HTML Payload Enabled</span>
              </div>
             <textarea 
               placeholder="Construct your broadcast message here..."
@@ -851,7 +851,7 @@ function MailManager() {
                 <div className="text-xs font-black uppercase tracking-tight text-white flex items-center gap-2">
                   <QrCode className="w-4 h-4 text-accent-500" /> Convert to Admission Ticket Passes
                 </div>
-                <p className="text-[10px] text-white/40 font-medium leading-relaxed uppercase tracking-wider">
+                <p className="text-[11px] text-white/40 font-medium leading-relaxed uppercase tracking-wider">
                   If enabled, each team's members will receive their official digital check-in passes alongside your custom message.
                 </p>
               </div>
@@ -872,7 +872,7 @@ function MailManager() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className={cn(
-              "p-6 rounded-2xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-4",
+              "p-6 rounded-2xl text-[11px] font-black uppercase tracking-widest border flex items-center gap-4",
               String(status).includes("Error") || String(status).includes("Failure")
                 ? "bg-red-500/10 border-red-500/20 text-red-500 shadow-[0_0_40px_rgba(239,68,68,0.1)]" 
                 : "bg-accent-500/10 border-accent-500/20 text-accent-500 shadow-[0_0_40px_rgba(34,197,94,0.1)]"
@@ -885,7 +885,7 @@ function MailManager() {
           <button 
             onClick={handleSend}
             disabled={sending || (recipientMode === 'system' && !selectedTargetId)}
-            className="w-full py-6 bg-white text-black font-black uppercase tracking-[0.3em] text-[11px] rounded-[24px] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-10 transition-all flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+            className="w-full py-6 bg-white text-black font-black uppercase tracking-[0.3em] text-[12px] rounded-[24px] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-10 transition-all flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
           >
             {sending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -1148,7 +1148,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
             title="Export to Excel"
           >
             <Download className="w-5 h-5 text-white/50 group-hover:text-black" />
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-black border border-white/10 rounded-md text-[8px] font-black uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap">
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-black border border-white/10 rounded-md text-[9px] font-black uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap">
               Export Database
             </div>
           </button>
@@ -1156,16 +1156,16 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
           {canEdit && (
             <button 
               onClick={() => setIsAddingTeam(true)}
-              className="bg-accent-500 text-black px-6 py-2.5 rounded-full font-black uppercase text-[10px] tracking-widest flex items-center gap-2 hover:bg-accent-400 transition-all shadow-[0_10px_30px_rgba(34,197,94,0.2)]"
+              className="bg-accent-500 text-black px-6 py-2.5 rounded-full font-black uppercase text-[11px] tracking-widest flex items-center gap-2 hover:bg-accent-400 transition-all shadow-[0_10px_30px_rgba(34,197,94,0.2)]"
             >
               <Plus className="w-3.5 h-3.5" /> Induct Team
             </button>
           )}
           <div className="flex gap-4">
-            <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white/60">
+            <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10 text-[11px] font-bold uppercase tracking-widest text-white/60">
                 {teams.length} Teams
             </div>
-            <div className="bg-accent-500/10 px-4 py-2 rounded-full border border-accent-500/20 text-[10px] font-bold uppercase tracking-widest text-accent-500">
+            <div className="bg-accent-500/10 px-4 py-2 rounded-full border border-accent-500/20 text-[11px] font-bold uppercase tracking-widest text-accent-500">
                 {totalParticipants} Participants
             </div>
           </div>
@@ -1185,7 +1185,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
           </div>
           <div>
             <h4 className="text-xs font-black uppercase tracking-widest text-white">Registration Portal Control</h4>
-            <p className="text-[10px] text-white/40 mt-1 uppercase tracking-wider font-semibold flex items-center gap-2">
+            <p className="text-[11px] text-white/40 mt-1 uppercase tracking-wider font-semibold flex items-center gap-2">
               Status: {registrationOpen ? (
                 <span className="text-green-400 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" /> OPEN & RECEIVING ENTRIES</span>
               ) : (
@@ -1197,14 +1197,14 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
         
         {canEdit && (
           <div className="flex items-center gap-3">
-            <span className="text-[9px] font-black uppercase tracking-widest text-white/30 hidden md:inline">
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/30 hidden md:inline">
               Toggle Portal State
             </span>
             <button
               onClick={toggleRegistration}
               disabled={togglingRegistration}
               className={cn(
-                "px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer select-none",
+                "px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer select-none",
                 registrationOpen 
                   ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_10px_20px_rgba(220,38,38,0.2)]" 
                   : "bg-green-600 hover:bg-green-500 text-white shadow-[0_10px_20px_rgba(22,163,74,0.2)]"
@@ -1228,7 +1228,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
           <button 
             onClick={() => setStatusFilter('all')}
             className={cn(
-              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all",
+              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all",
               statusFilter === 'all' ? "bg-white text-black shadow-lg" : "text-white/30 hover:text-white"
             )}
           >
@@ -1237,7 +1237,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
           <button 
             onClick={() => setStatusFilter('pending')}
             className={cn(
-              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
               statusFilter === 'pending' ? "bg-accent-500 text-black shadow-lg" : "text-accent-500/40 hover:text-accent-500"
             )}
           >
@@ -1246,7 +1246,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
           <button 
             onClick={() => setStatusFilter('approved')}
             className={cn(
-              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
               statusFilter === 'approved' ? "bg-green-500 text-black shadow-lg" : "text-green-500/40 hover:text-green-500"
             )}
           >
@@ -1255,7 +1255,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
           <button 
             onClick={() => setStatusFilter('disapproved')}
             className={cn(
-              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+              "flex-1 md:flex-none px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
               statusFilter === 'disapproved' ? "bg-red-500 text-black shadow-lg" : "text-red-500/40 hover:text-red-500"
             )}
           >
@@ -1265,12 +1265,12 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
 
         <div className="flex items-center gap-12 px-8">
            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Active Batches</span>
+              <span className="text-[11px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Active Batches</span>
               <span className="text-xl font-black text-white italic">{filteredTeams.length}</span>
            </div>
            <div className="h-8 w-px bg-white/5" />
            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Human Assets</span>
+              <span className="text-[11px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Human Assets</span>
               <span className="text-xl font-black text-accent-500 italic">{filteredTeams.reduce((acc, t) => acc + (t.members?.length || 0), 0)}</span>
            </div>
         </div>
@@ -1298,7 +1298,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                 </div>
                 <div>
                   <h3 className="text-3xl font-black uppercase tracking-tighter italic text-white leading-none">Manual Team <span className="text-accent-500">Induction</span></h3>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/20 mt-2">Initialize squad with immediate status approval</p>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-white/20 mt-2">Initialize squad with immediate status approval</p>
                 </div>
               </div>
 
@@ -1306,7 +1306,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                 {/* Team Primary Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Squad Name</label>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Squad Name</label>
                     <input 
                       required
                       placeholder="e.g. CyberX" 
@@ -1316,7 +1316,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Primary Contact Email</label>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Primary Contact Email</label>
                     <input 
                       required
                       type="email"
@@ -1330,7 +1330,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                    <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Hack Track</label>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Hack Track</label>
                     <select 
                       required
                       value={newTeam.trackId}
@@ -1344,7 +1344,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Problem Statement</label>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Problem Statement</label>
                     <select 
                       required
                       value={newTeam.problemId}
@@ -1358,7 +1358,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Origin City</label>
+                    <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Origin City</label>
                     <input 
                       placeholder="e.g. Dehradun, Uttarakhand" 
                       value={newTeam.city} 
@@ -1373,12 +1373,12 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-6 bg-accent-500 rounded-full" />
-                      <p className="text-[12px] font-black uppercase tracking-[0.2em] text-accent-500">Squad Members</p>
+                      <p className="text-[13px] font-black uppercase tracking-[0.2em] text-accent-500">Squad Members</p>
                     </div>
                     <button 
                       type="button"
                       onClick={addMemberField}
-                      className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-accent-500 transition-colors flex items-center gap-2"
+                      className="text-[11px] font-black uppercase tracking-widest text-white/40 hover:text-accent-500 transition-colors flex items-center gap-2"
                     >
                       <Plus className="w-4 h-4" /> Add Participant
                     </button>
@@ -1402,7 +1402,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                           </button>
                         )}
                         <div className="space-y-1">
-                          <label className="text-[8px] font-black uppercase tracking-widest text-white/20 ml-2">Full name</label>
+                          <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">Full name</label>
                           <input 
                             required
                             placeholder="Name" 
@@ -1412,7 +1412,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[8px] font-black uppercase tracking-widest text-white/20 ml-2">Email</label>
+                          <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">Email</label>
                           <input 
                             required
                             type="email"
@@ -1423,7 +1423,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[8px] font-black uppercase tracking-widest text-white/20 ml-2">Phone</label>
+                          <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">Phone</label>
                           <input 
                             required
                             placeholder="Phone" 
@@ -1433,7 +1433,7 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[8px] font-black uppercase tracking-widest text-white/20 ml-2">Role</label>
+                          <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">Role</label>
                           <select 
                             value={member.role}
                             onChange={e => updateMemberField(index, 'role', e.target.value)}
@@ -1479,19 +1479,19 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
                 <div className="flex items-center gap-4">
                     <h3 className="text-3xl font-black uppercase tracking-tight italic text-accent-500">{team.name}</h3>
                     <span className={cn(
-                    "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                    "px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest",
                     team.status === 'approved' ? "bg-green-500/20 text-green-400" :
                     team.status === 'disapproved' ? "bg-red-500/20 text-red-400" : "bg-accent-500/20 text-accent-400"
                     )}>
                     {team.status}
                     </span>
-                    {!canEdit && <span className="text-[8px] font-black uppercase text-white/20 border border-white/10 px-2 py-0.5 rounded">Vault Mode</span>}
+                    {!canEdit && <span className="text-[9px] font-black uppercase text-white/20 border border-white/10 px-2 py-0.5 rounded">Vault Mode</span>}
                 </div>
                 {canEdit && (
                   deletingId === team.id ? (
                       <div className="flex items-center gap-2 bg-red-500/10 p-1 rounded-lg border border-red-500/20">
-                          <button onClick={() => removeTeam(team.id)} className="text-[9px] bg-red-500 text-white px-3 py-1.5 rounded font-black uppercase tracking-widest">Confirm Delete</button>
-                          <button onClick={() => setDeletingId(null)} className="text-[9px] text-white/40 px-2 font-bold uppercase">Cancel</button>
+                          <button onClick={() => removeTeam(team.id)} className="text-[10px] bg-red-500 text-white px-3 py-1.5 rounded font-black uppercase tracking-widest">Confirm Delete</button>
+                          <button onClick={() => setDeletingId(null)} className="text-[10px] text-white/40 px-2 font-bold uppercase">Cancel</button>
                       </div>
                   ) : (
                       <button onClick={() => setDeletingId(team.id)} className="opacity-0 group-hover:opacity-100 p-2 text-white/20 hover:text-red-500 transition-all">
@@ -1503,35 +1503,35 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-white/20">Track Selection</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-black text-white/20">Track Selection</p>
                   <p className="text-white font-bold uppercase tracking-tight">{getTrackName(team.trackId)}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-white/20">Problem Statement</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-black text-white/20">Problem Statement</p>
                   <p className="text-white font-bold uppercase tracking-tight text-sm line-clamp-1 italic">{getProblemTitle(team.problemId)}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-white/20">Current City</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-black text-white/20">Current City</p>
                   <p className="text-white font-bold uppercase tracking-tight italic text-accent-500/80">{team.city || 'NOT SPECIFIED'}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-white/20">Team Composition</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-black text-white/20">Team Composition</p>
                   <p className="text-white font-bold uppercase tracking-tight">{team.members?.length || 0} Members</p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <p className="text-[10px] uppercase tracking-[0.2em] font-black text-white/20">Participant Details</p>
+                <p className="text-[11px] uppercase tracking-[0.2em] font-black text-white/20">Participant Details</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {team.members?.map((m: any, i: number) => (
                         <div key={i} className="p-4 bg-black/40 rounded-xl border border-white/5 space-y-2">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs font-black uppercase tracking-tight">{m.name}</p>
-                                <span className="text-[8px] px-1.5 py-0.5 bg-white/5 rounded text-white/30 font-bold uppercase tracking-widest">{m.role || 'MEMBER'}</span>
+                                <span className="text-[9px] px-1.5 py-0.5 bg-white/5 rounded text-white/30 font-bold uppercase tracking-widest">{m.role || 'MEMBER'}</span>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[10px] text-white/40 font-medium truncate">{m.email}</p>
-                                <p className="text-[10px] text-accent-500/70 font-black tracking-widest">{m.phone || 'NO PHONE'}</p>
+                                <p className="text-[11px] text-white/40 font-medium truncate">{m.email}</p>
+                                <p className="text-[11px] text-accent-500/70 font-black tracking-widest">{m.phone || 'NO PHONE'}</p>
                             </div>
                         </div>
                     ))}
@@ -1543,19 +1543,19 @@ function TeamsManager({ canEdit = true }: { canEdit?: boolean }) {
               <div className="flex items-center gap-4 pt-6 border-t border-white/5">
                 <button 
                   onClick={() => updateStatus(team.id, 'approved', team)}
-                  className="flex-1 py-4 bg-green-500/10 text-green-500 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-green-500 hover:text-black transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-green-500/10 text-green-500 rounded-xl font-black uppercase text-[11px] tracking-widest hover:bg-green-500 hover:text-black transition-all flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" /> Grant Admission
                 </button>
                 <button 
                   onClick={() => updateStatus(team.id, 'disapproved', team)}
-                  className="flex-1 py-4 bg-red-500/10 text-red-500 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-red-500 hover:text-black transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-red-500/10 text-red-500 rounded-xl font-black uppercase text-[11px] tracking-widest hover:bg-red-500 hover:text-black transition-all flex items-center justify-center gap-2"
                 >
                   <XCircle className="w-4 h-4" /> Deny Access
                 </button>
                 <button 
                   onClick={() => updateStatus(team.id, 'pending', team)}
-                  className="px-6 py-4 bg-white/5 text-white/20 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-white/10 hover:text-white transition-all"
+                  className="px-6 py-4 bg-white/5 text-white/20 rounded-xl font-black uppercase text-[11px] tracking-widest hover:bg-white/10 hover:text-white transition-all"
                 >
                   Reset
                 </button>
@@ -1630,7 +1630,7 @@ function TracksManager() {
           <h2 className="text-4xl font-black uppercase tracking-tighter italic">Track <span className="text-white/20">Control</span></h2>
           <p className="text-white/40 text-sm mt-2">Manage the main domains for the hackathon.</p>
         </div>
-        <button onClick={seedData} className="px-4 py-2 border border-info-500/30 text-info-400 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-info-500 hover:text-black transition-all">
+        <button onClick={seedData} className="px-4 py-2 border border-info-500/30 text-info-400 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-info-500 hover:text-black transition-all">
             <Database className="w-3.5 h-3.5" /> Seed Defaults
         </button>
       </div>
@@ -1684,15 +1684,15 @@ function TracksManager() {
           <div key={t.id} className="bg-white/5 border border-white/10 rounded-xl p-5 flex justify-between items-center group">
             <div>
               <h4 className="font-black uppercase tracking-tight text-xl">{t.name}</h4>
-              <p className="text-white/40 text-[10px] uppercase tracking-widest mt-1">{t.description}</p>
+              <p className="text-white/40 text-[11px] uppercase tracking-widest mt-1">{t.description}</p>
             </div>
             <div className="flex items-center gap-2">
               {deletingId === t.id ? (
                 <div className="flex items-center gap-2 bg-red-500/10 p-1 rounded-lg">
-                  <button onClick={() => removeTrack(t.id)} className="text-[10px] bg-red-500 text-white px-3 py-1.5 rounded-md font-bold uppercase tracking-widest">
+                  <button onClick={() => removeTrack(t.id)} className="text-[11px] bg-red-500 text-white px-3 py-1.5 rounded-md font-bold uppercase tracking-widest">
                     Confirm
                   </button>
-                  <button onClick={() => setDeletingId(null)} className="text-[10px] text-white/40 hover:text-white px-2 font-bold uppercase tracking-widest">
+                  <button onClick={() => setDeletingId(null)} className="text-[11px] text-white/40 hover:text-white px-2 font-bold uppercase tracking-widest">
                     Cancel
                   </button>
                 </div>
@@ -1838,7 +1838,7 @@ function ProblemsManager() {
         {problems.map(p => (
           <div key={p.id} className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6 group">
             <div className="space-y-2">
-              <span className="px-2 py-0.5 bg-accent-500/10 text-accent-500 rounded-md text-[9px] font-bold uppercase tracking-widest border border-accent-500/20">
+              <span className="px-2 py-0.5 bg-accent-500/10 text-accent-500 rounded-md text-[10px] font-bold uppercase tracking-widest border border-accent-500/20">
                 {tracks.find(t => t.id === p.trackId)?.name || 'Unknown Track'}
               </span>
               <h4 className="font-black uppercase tracking-tight text-xl">{p.title}</h4>
@@ -1847,10 +1847,10 @@ function ProblemsManager() {
             <div className="flex items-center gap-2 self-start">
               {deletingId === p.id ? (
                  <div className="flex items-center gap-2 bg-red-500/10 p-2 rounded-lg border border-red-500/20">
-                   <button onClick={() => removeProblem(p.id)} className="text-[10px] bg-red-500 text-white px-4 py-2 rounded-md font-black uppercase tracking-widest hover:bg-red-600 transition-all">
+                   <button onClick={() => removeProblem(p.id)} className="text-[11px] bg-red-500 text-white px-4 py-2 rounded-md font-black uppercase tracking-widest hover:bg-red-600 transition-all">
                      Confirm
                    </button>
-                   <button onClick={() => setDeletingId(null)} className="text-[10px] text-white/40 hover:text-white px-2 font-bold uppercase tracking-widest">
+                   <button onClick={() => setDeletingId(null)} className="text-[11px] text-white/40 hover:text-white px-2 font-bold uppercase tracking-widest">
                      Cancel
                    </button>
                  </div>
@@ -1979,7 +1979,7 @@ function TimelineManager() {
                         Add Step
                     </button>
                     {items.length === 0 && (
-                        <button onClick={seedDefaults} className="px-6 bg-white/10 text-white p-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-colors">
+                        <button onClick={seedDefaults} className="px-6 bg-white/10 text-white p-4 rounded-xl font-bold uppercase text-[11px] tracking-widest hover:bg-white/20 transition-colors">
                             Seed Defaults
                         </button>
                     )}
@@ -1999,15 +1999,15 @@ function TimelineManager() {
                                         <span className="text-white/20 font-black italic text-xl">#{item.order}</span>
                                         <div>
                                             <h4 className="font-bold uppercase tracking-widest text-sm">{item.event}</h4>
-                                            <p className="text-accent-500 text-[10px] uppercase font-black">{item.time}</p>
-                                            {item.description && <p className="text-white/20 text-[10px] mt-1 italic">{item.description}</p>}
+                                            <p className="text-accent-500 text-[11px] uppercase font-black">{item.time}</p>
+                                            {item.description && <p className="text-white/20 text-[11px] mt-1 italic">{item.description}</p>}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {deletingId === item.id ? (
                                             <div className="flex items-center gap-2">
-                                                <button onClick={() => removeItem(item.id)} className="text-[9px] bg-red-500 text-white px-2 py-1 rounded font-bold uppercase">Confirm</button>
-                                                <button onClick={() => setDeletingId(null)} className="text-[9px] text-white/40 px-1 font-bold">CANCEL</button>
+                                                <button onClick={() => removeItem(item.id)} className="text-[10px] bg-red-500 text-white px-2 py-1 rounded font-bold uppercase">Confirm</button>
+                                                <button onClick={() => setDeletingId(null)} className="text-[10px] text-white/40 px-1 font-bold">CANCEL</button>
                                             </div>
                                         ) : (
                                             <button onClick={() => setDeletingId(item.id)} className="opacity-0 group-hover:opacity-100 p-2 text-white/20 hover:text-red-500 transition-all">
@@ -2112,7 +2112,7 @@ function RoundsManager() {
                     <h2 className="text-4xl font-black uppercase tracking-tighter italic">Stage <span className="text-white/20">Gate</span></h2>
                     <p className="text-white/40 text-sm mt-2">Manage rounds and elimination gates.</p>
                 </div>
-                <button onClick={seedRounds} className="px-4 py-2 border border-info-500/30 text-info-400 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-info-500 hover:text-black transition-all">
+                <button onClick={seedRounds} className="px-4 py-2 border border-info-500/30 text-info-400 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-info-500 hover:text-black transition-all">
                     <Database className="w-3.5 h-3.5" /> Sync Document Rounds
                 </button>
             </div>
@@ -2146,12 +2146,12 @@ function RoundsManager() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h3 className="text-2xl font-black uppercase tracking-tight">{round.name}</h3>
-                                <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold">Sequence #{round.order}</p>
+                                <p className="text-[11px] text-white/30 uppercase tracking-[0.2em] font-bold">Sequence #{round.order}</p>
                             </div>
                             <button 
                                 onClick={() => toggleActive(round.id, round.isActive, round)}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all",
+                                    "px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border transition-all",
                                     round.isActive ? "bg-green-500 text-black border-green-500" : "bg-white/5 text-white/20 border-white/10"
                                 )}
                             >
@@ -2161,8 +2161,8 @@ function RoundsManager() {
                         <div className="flex justify-end pt-4 border-t border-white/5 items-center gap-4">
                             {deletingId === round.id ? (
                                 <div className="flex items-center gap-2">
-                                    <button onClick={() => removeRound(round.id)} className="text-[9px] bg-red-500 text-white px-3 py-1.5 rounded font-bold uppercase">Confirm Delete</button>
-                                    <button onClick={() => setDeletingId(null)} className="text-[9px] text-white/40 px-2 font-bold">CANCEL</button>
+                                    <button onClick={() => removeRound(round.id)} className="text-[10px] bg-red-500 text-white px-3 py-1.5 rounded font-bold uppercase">Confirm Delete</button>
+                                    <button onClick={() => setDeletingId(null)} className="text-[10px] text-white/40 px-2 font-bold">CANCEL</button>
                                 </div>
                             ) : (
                                 <button onClick={() => setDeletingId(round.id)} className="text-white/10 hover:text-red-500 transition-colors">
@@ -2292,7 +2292,7 @@ function EliminationManager() {
                   : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
               )}
             >
-              <span className={cn("text-[9px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-black/60" : "text-accent-500")}>
+              <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-black/60" : "text-accent-500")}>
                 Round {r.order}
               </span>
               <span className="font-black text-sm uppercase tracking-tight">{r.name}</span>
@@ -2305,16 +2305,16 @@ function EliminationManager() {
         {/* Contenders Section */}
         <section className="space-y-6">
           <div className="flex items-center justify-between px-6 py-3 bg-white/5 rounded-xl border border-white/5 backdrop-blur-sm">
-            <span className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Active Contenders ({contenders.length})</span>
+            <span className="text-[11px] uppercase font-black tracking-[0.2em] text-white/30">Active Contenders ({contenders.length})</span>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-accent-500">Processing Required</span>
+              <span className="text-[11px] uppercase font-black tracking-[0.2em] text-accent-500">Processing Required</span>
               <div className="w-2 h-2 bg-accent-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
             </div>
           </div>
 
           {contenders.length === 0 ? (
             <div className="py-12 text-center bg-white/5 border border-dashed border-white/10 rounded-3xl">
-              <p className="text-white/20 uppercase tracking-[0.3em] font-black text-[10px]">No squads pending evaluation at this gate.</p>
+              <p className="text-white/20 uppercase tracking-[0.3em] font-black text-[11px]">No squads pending evaluation at this gate.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2334,7 +2334,7 @@ function EliminationManager() {
                         </div>
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Score (0-100)</label>
+                            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-2">Score (0-100)</label>
                             <input 
                               type="number" 
                               value={gateMarks || 0}
@@ -2343,7 +2343,7 @@ function EliminationManager() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Justification / Note</label>
+                            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-2">Justification / Note</label>
                             <textarea 
                               placeholder="Why this decision? Feedback for the squad..."
                               value={gateNote || ""}
@@ -2366,12 +2366,12 @@ function EliminationManager() {
                       <div className="space-y-6">
                         <div className="flex flex-col">
                             <h4 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-white">{team.name}</h4>
-                            <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest mt-2">Gate #{activeRound.order} Contender</span>
+                            <span className="text-[11px] font-bold text-white/20 uppercase tracking-widest mt-2">Gate #{activeRound.order} Contender</span>
                         </div>
 
                         {submission && (
                           <div className="p-4 bg-black/40 border border-white/5 rounded-2xl">
-                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-2">Work Done Submission</p>
+                             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30 mb-2">Work Done Submission</p>
                              <p className="text-xs text-white/60 italic leading-relaxed line-clamp-3">"{submission.workDone}"</p>
                           </div>
                         )}
@@ -2408,11 +2408,11 @@ function EliminationManager() {
         {/* Processed Section */}
         <section className="space-y-6">
           <div className="flex items-center justify-between px-6 py-3 bg-white/5 rounded-xl border border-white/5 backdrop-blur-sm">
-            <span className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Gate History ({evaluated.length})</span>
+            <span className="text-[11px] uppercase font-black tracking-[0.2em] text-white/30">Gate History ({evaluated.length})</span>
           </div>
 
           {evaluated.length === 0 ? (
-            <div className="py-12 text-center text-white/10 uppercase tracking-widest font-black text-[9px]">
+            <div className="py-12 text-center text-white/10 uppercase tracking-widest font-black text-[10px]">
               History ledger is empty for this gate.
             </div>
           ) : (
@@ -2423,19 +2423,19 @@ function EliminationManager() {
                     <h5 className="font-black uppercase tracking-tight text-white mb-1">{team.name}</h5>
                     <div className="flex items-center gap-3">
                       <span className={cn(
-                        "text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded",
+                        "text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded",
                         team.isEliminated ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"
                       )}>
                         {team.isEliminated ? 'ELIMINATED' : 'QUALIFIED'}
                       </span>
                       {team.roundEvaluations?.[activeRound.order] && (
-                        <span className="text-[8px] font-bold text-white/30">SCORE: {team.roundEvaluations[activeRound.order].marks}/100</span>
+                        <span className="text-[9px] font-bold text-white/30">SCORE: {team.roundEvaluations[activeRound.order].marks}/100</span>
                       )}
                     </div>
                   </div>
                   <button 
                     onClick={() => revertDecision(team)}
-                    className="opacity-0 group-hover:opacity-100 p-2 bg-accent-500 text-black rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-accent-400 transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-2 bg-accent-500 text-black rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-accent-400 transition-all"
                   >
                     <Database className="w-3.5 h-3.5" /> Revert
                   </button>
@@ -2517,7 +2517,7 @@ function EvaluationManager() {
                   : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
               )}
             >
-              <span className={cn("text-[9px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-black/60" : "text-accent-500")}>
+              <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", activeRound?.id === r.id ? "text-black/60" : "text-accent-500")}>
                 Round {r.order}
               </span>
               <span className="font-black text-sm uppercase tracking-tight">{r.name}</span>
@@ -2551,19 +2551,19 @@ function EvaluationManager() {
                           <h4 className="text-3xl font-black uppercase tracking-tight italic text-accent-500">{team.name}</h4>
                           <div className="flex items-center gap-2 mt-1">
                             <Database className="w-3 h-3 text-white/20" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-white/30">{team.trackId}</span>
+                            <span className="text-[11px] font-black uppercase tracking-widest text-white/30">{team.trackId}</span>
                           </div>
                         </div>
                         {evaluation && !isEditing && (
                            <div className="bg-green-500/10 border border-green-500/30 px-3 py-1 rounded-full flex items-center gap-2">
                              <CheckCircle className="w-3 h-3 text-green-500" />
-                             <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Graded</span>
+                             <span className="text-[11px] font-black text-green-500 uppercase tracking-widest">Graded</span>
                            </div>
                         )}
                       </div>
 
                       <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">
+                        <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-white/20">
                           <FileText className="w-3.5 h-3.5" /> Work Done Manifest
                         </div>
                         <div className="p-6 bg-black/40 border border-white/10 rounded-3xl min-h-[120px]">
@@ -2581,7 +2581,7 @@ function EvaluationManager() {
                       {isEditing ? (
                         <div className="bg-white/5 border border-accent-500/30 p-6 rounded-3xl space-y-6 animate-in zoom-in-95 duration-200">
                           <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Marks (0-100)</label>
+                            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-2">Marks (0-100)</label>
                             <input 
                               type="number" 
                               max={100}
@@ -2592,7 +2592,7 @@ function EvaluationManager() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Mentor Verdict</label>
+                            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-2">Mentor Verdict</label>
                             <textarea 
                               placeholder="Logic solid, UI needs polish..."
                               value={comments || ""}
@@ -2603,7 +2603,7 @@ function EvaluationManager() {
                           <div className="flex gap-2">
                             <button 
                               onClick={() => saveEvaluation(team.id)}
-                              className="flex-1 py-3 bg-accent-500 text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-accent-400"
+                              className="flex-1 py-3 bg-accent-500 text-black font-black uppercase text-[11px] tracking-widest rounded-xl hover:bg-accent-400"
                             >
                               Finalize
                             </button>
@@ -2621,7 +2621,7 @@ function EvaluationManager() {
                             <div className="p-6 border border-white/5 bg-black/40 rounded-3xl space-y-4">
                               <div className="flex justify-between items-end">
                                 <div>
-                                  <div className="text-[10px] font-black uppercase tracking-widest text-white/20">Marks Assigned</div>
+                                  <div className="text-[11px] font-black uppercase tracking-widest text-white/20">Marks Assigned</div>
                                   <div className="text-4xl font-black italic">{evaluation.marks}<span className="text-white/20 text-sm ml-1">/100</span></div>
                                 </div>
                                 <button 
@@ -2636,7 +2636,7 @@ function EvaluationManager() {
                                 </button>
                               </div>
                               <div className="space-y-1">
-                                <div className="text-[9px] font-black uppercase tracking-widest text-accent-500/50">Feedback</div>
+                                <div className="text-[10px] font-black uppercase tracking-widest text-accent-500/50">Feedback</div>
                                 <p className="text-xs text-white/40 italic leading-relaxed">"{evaluation.comments}"</p>
                               </div>
                             </div>
@@ -2650,7 +2650,7 @@ function EvaluationManager() {
                               className="w-full py-12 border-2 border-dashed border-white/5 rounded-[40px] text-white/20 hover:border-accent-500/30 hover:text-accent-500 transition-all flex flex-col items-center gap-3"
                             >
                               <Star className="w-8 h-8 opacity-20" />
-                              <span className="text-[10px] font-black uppercase tracking-[0.3em]">Initialize Scoring</span>
+                              <span className="text-[11px] font-black uppercase tracking-[0.3em]">Initialize Scoring</span>
                             </button>
                           )}
                         </div>
@@ -2830,7 +2830,7 @@ function EventTeamManager() {
           <form onSubmit={handleAddMember} className="bg-white/5 border border-white/10 p-8 rounded-[40px] space-y-8 sticky top-24 backdrop-blur-xl">
              <div className="flex items-center gap-3">
                <div className="w-1 h-6 bg-accent-500 rounded-full" />
-               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-accent-500">New Appointment</p>
+               <p className="text-[12px] font-black uppercase tracking-[0.2em] text-accent-500">New Appointment</p>
              </div>
             
             <div className="space-y-5">
@@ -2860,8 +2860,8 @@ function EventTeamManager() {
               />
 
               <div className="space-y-3 pt-2">
-                <p className="text-[10px] font-black uppercase text-white/40 tracking-wider">Granted Permissions</p>
-                <div className="grid grid-cols-1 gap-2 text-[10px] font-bold">
+                <p className="text-[11px] font-black uppercase text-white/40 tracking-wider">Granted Permissions</p>
+                <div className="grid grid-cols-1 gap-2 text-[11px] font-bold">
                   {Object.keys(newMember.permissions).map((perm) => (
                     <label key={perm} className="flex items-center gap-3 cursor-pointer p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-accent-500/50 transition-all group">
                       <input 
@@ -2873,7 +2873,7 @@ function EventTeamManager() {
                         })}
                         className="w-5 h-5 rounded border-white/10 bg-black/40 accent-accent-500 cursor-pointer"
                       />
-                      <span className="group-hover:text-accent-500 transition-colors uppercase tracking-widest text-[9px] font-black">{perm.replace('manage_', 'MANAGE ').replace('view_', 'VIEW ').replace('_', ' ')}</span>
+                      <span className="group-hover:text-accent-500 transition-colors uppercase tracking-widest text-[10px] font-black">{perm.replace('manage_', 'MANAGE ').replace('view_', 'VIEW ').replace('_', ' ')}</span>
                     </label>
                   ))}
                 </div>
@@ -2903,7 +2903,7 @@ function EventTeamManager() {
                  </div>
                  <div>
                    <h4 className="font-black uppercase italic text-white tracking-widest">{member.name}</h4>
-                   <p className="text-[10px] text-accent-500 font-bold uppercase">{member.designation}</p>
+                   <p className="text-[11px] text-accent-500 font-bold uppercase">{member.designation}</p>
                  </div>
               </div>
               <div className="flex gap-2">
@@ -2940,8 +2940,8 @@ function EventTeamManager() {
                 />
 
                 <div className="space-y-3 pt-2">
-                  <p className="text-[10px] font-black uppercase text-white/40 tracking-wider">Update Permissions</p>
-                  <div className="grid grid-cols-1 gap-2 text-[10px] font-bold">
+                  <p className="text-[11px] font-black uppercase text-white/40 tracking-wider">Update Permissions</p>
+                  <div className="grid grid-cols-1 gap-2 text-[11px] font-bold">
                     {Object.keys(editingMember.permissions || {}).map((perm) => (
                       <label key={perm} className="flex items-center gap-3 cursor-pointer p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-accent-500/50 transition-all group">
                         <input 
@@ -2953,7 +2953,7 @@ function EventTeamManager() {
                           })}
                           className="w-5 h-5 rounded border-white/10 bg-black/40 accent-accent-500 cursor-pointer"
                         />
-                        <span className="group-hover:text-accent-500 transition-colors uppercase tracking-widest text-[9px] font-black">{perm.replace('manage_', 'MANAGE ').replace('view_', 'VIEW ').replace('_', ' ')}</span>
+                        <span className="group-hover:text-accent-500 transition-colors uppercase tracking-widest text-[10px] font-black">{perm.replace('manage_', 'MANAGE ').replace('view_', 'VIEW ').replace('_', ' ')}</span>
                       </label>
                     ))}
                   </div>
@@ -3250,12 +3250,12 @@ function MentorsManager() {
           <form onSubmit={handleAddMentor} className="bg-white/5 border border-white/10 p-8 rounded-[40px] space-y-8 sticky top-24 backdrop-blur-xl">
              <div className="flex items-center gap-3">
                <div className="w-1 h-6 bg-info-500 rounded-full" />
-               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-info-500">New Induction</p>
+               <p className="text-[12px] font-black uppercase tracking-[0.2em] text-info-500">New Induction</p>
              </div>
             
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Member Identity</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Member Identity</label>
                 <input 
                   placeholder="Full Name"
                   value={newMentor.name}
@@ -3264,7 +3264,7 @@ function MentorsManager() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Communication Channel</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Communication Channel</label>
                 <input 
                   placeholder="Email Address"
                   type="email"
@@ -3274,7 +3274,7 @@ function MentorsManager() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL (Drive UC URL)</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL (Drive UC URL)</label>
                 <input 
                   placeholder="e.g. https://drive.google.com/uc?..."
                   value={newMentor.photo}
@@ -3284,7 +3284,7 @@ function MentorsManager() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Designation</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Designation</label>
                   <input 
                     placeholder="e.g. Lead Organizer"
                     value={newMentor.designation}
@@ -3293,7 +3293,7 @@ function MentorsManager() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Company</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Company</label>
                   <input 
                     placeholder="e.g. OptiMaxin"
                     value={newMentor.company}
@@ -3333,7 +3333,7 @@ function MentorsManager() {
 
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between ml-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Active Team ({mentors.length})</p>
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/30">Active Team ({mentors.length})</p>
             <div className="h-px flex-1 bg-white/5 mx-8" />
           </div>
 
@@ -3352,7 +3352,7 @@ function MentorsManager() {
                     {(() => {
                       const assignedSquads = teams.filter(t => mentor.assignedTeams?.includes(t.id));
                       return assignedSquads.length > 0 ? (
-                        <div className="absolute -top-2 -right-2 w-7 h-7 bg-accent-500 text-black rounded-full flex items-center justify-center text-[10px] font-black border-4 border-[#0a0a0a]">
+                        <div className="absolute -top-2 -right-2 w-7 h-7 bg-accent-500 text-black rounded-full flex items-center justify-center text-[11px] font-black border-4 border-[#0a0a0a]">
                           {assignedSquads.length}
                         </div>
                       ) : null;
@@ -3360,26 +3360,26 @@ function MentorsManager() {
                   </div>
                   <div>
                     <h4 className="font-black uppercase text-white text-2xl leading-none tracking-tighter italic group-hover:text-accent-500 transition-colors">{mentor.name}</h4>
-                    <p className="text-[10px] text-accent-500 font-black uppercase tracking-widest mt-1">
+                    <p className="text-[11px] text-accent-500 font-black uppercase tracking-widest mt-1">
                       {mentor.designation} {mentor.company ? `@ ${mentor.company}` : ''}
                     </p>
-                    <p className="text-[10px] text-white/30 font-bold mt-1 uppercase tracking-widest">{mentor.email}</p>
+                    <p className="text-[11px] text-white/30 font-bold mt-1 uppercase tracking-widest">{mentor.email}</p>
                     <div className="flex items-center gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => setEditingMentor(mentor)}
-                        className="p-2 bg-white/5 border border-white/10 rounded-lg text-white/40 hover:text-white hover:border-white/30 transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest"
+                        className="p-2 bg-white/5 border border-white/10 rounded-lg text-white/40 hover:text-white hover:border-white/30 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest"
                       >
                         <Edit2 className="w-3 h-3" /> Edit
                       </button>
                       <button 
                         onClick={() => handleResendNotification(mentor)}
-                        className="p-2 bg-accent-500/10 border border-accent-500/20 rounded-lg text-accent-500/40 hover:text-accent-500 hover:border-accent-500/30 transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest"
+                        className="p-2 bg-accent-500/10 border border-accent-500/20 rounded-lg text-accent-500/40 hover:text-accent-500 hover:border-accent-500/30 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest"
                       >
                         <Mail className="w-3 h-3" /> Resend
                       </button>
                       <button 
                         onClick={() => setDeletingMentor(mentor)}
-                        className="p-2 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500/40 hover:text-red-500 hover:border-red-500/30 transition-all flex items-center gap-2 text-[9px] font-black uppercase tracking-widest"
+                        className="p-2 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500/40 hover:text-red-500 hover:border-red-500/30 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest"
                       >
                         <Trash2 className="w-3 h-3" /> Delete
                       </button>
@@ -3393,12 +3393,12 @@ function MentorsManager() {
                       const assignedSquads = teams.filter(t => mentor.assignedTeams?.includes(t.id));
                       return (
                         <>
-                          <p className="text-[10px] font-black uppercase text-white/20 tracking-widest">Responsibility</p>
+                          <p className="text-[11px] font-black uppercase text-white/20 tracking-widest">Responsibility</p>
                           <p className="text-lg font-black text-white italic">{assignedSquads.length} Squads</p>
                           <div className="flex flex-col items-end gap-1.5 mt-3">
                             {assignedSquads.map(team => (
                               <div key={team.id} className="flex items-center gap-2 group/assigned">
-                                <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest whitespace-nowrap bg-white/5 px-2 py-0.5 rounded border border-white/5">{team.name}</span>
+                                <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest whitespace-nowrap bg-white/5 px-2 py-0.5 rounded border border-white/5">{team.name}</span>
                                 <button 
                                   onClick={() => unassignTeam(mentor.id, team.id)}
                                   className="text-red-500/30 hover:text-red-500 p-1 transition-all hover:bg-red-500/10 rounded-md"
@@ -3421,7 +3421,7 @@ function MentorsManager() {
                         setSquadSearchQuery("");
                       }}
                       className={cn(
-                        "px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all gap-2 flex items-center",
+                        "px-6 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all gap-2 flex items-center",
                         assigningTo === mentor.id ? "bg-white text-black" : "bg-white/5 text-white/60 hover:text-white border border-white/10 hover:border-white/30"
                       )}
                     >
@@ -3439,7 +3439,7 @@ function MentorsManager() {
                               placeholder="SEARCH SQUAD..."
                               value={squadSearchQuery}
                               onChange={(e) => setSquadSearchQuery(e.target.value)}
-                              className="w-full bg-transparent border-none outline-none text-[10px] text-white placeholder-white/30 font-black uppercase tracking-widest"
+                              className="w-full bg-transparent border-none outline-none text-[11px] text-white placeholder-white/30 font-black uppercase tracking-widest"
                               autoFocus
                             />
                             {squadSearchQuery && (
@@ -3451,7 +3451,7 @@ function MentorsManager() {
                               </button>
                             )}
                           </div>
-                          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 px-1">Select Target Unit</p>
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1">Select Target Unit</p>
                         </div>
                         <div className="space-y-1">
                           {(() => {
@@ -3463,7 +3463,7 @@ function MentorsManager() {
                               return (
                                 <div className="p-6 text-center">
                                   <ShieldCheck className="w-8 h-8 text-white/10 mx-auto mb-3" />
-                                  <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest italic leading-relaxed">
+                                  <p className="text-[11px] text-white/20 font-bold uppercase tracking-widest italic leading-relaxed">
                                     {unassigned.length === 0 ? "All units assigned." : "No matching units found."}
                                   </p>
                                 </div>
@@ -3516,13 +3516,13 @@ function MentorsManager() {
               </div>
               <div>
                 <h3 className="text-2xl font-black uppercase tracking-tighter italic text-white leading-none">Modify Identity</h3>
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/20 mt-1">Mentor Reconstruction</p>
+                <p className="text-[11px] font-black uppercase tracking-widest text-white/20 mt-1">Mentor Reconstruction</p>
               </div>
             </div>
 
             <form onSubmit={handleUpdateMentor} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Full Name</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Full Name</label>
                 <input 
                   value={editingMentor.name || ""}
                   onChange={(e) => setEditingMentor({...editingMentor, name: e.target.value})}
@@ -3530,7 +3530,7 @@ function MentorsManager() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL</label>
                 <input 
                   value={editingMentor.photo || ""}
                   onChange={(e) => setEditingMentor({...editingMentor, photo: e.target.value})}
@@ -3539,7 +3539,7 @@ function MentorsManager() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Designation</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Designation</label>
                   <input 
                     value={editingMentor.designation || ''}
                     onChange={(e) => setEditingMentor({...editingMentor, designation: e.target.value})}
@@ -3547,7 +3547,7 @@ function MentorsManager() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Company</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Company</label>
                   <input 
                     value={editingMentor.company || ''}
                     onChange={(e) => setEditingMentor({...editingMentor, company: e.target.value})}
@@ -3556,7 +3556,7 @@ function MentorsManager() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Communication Info (Immutable)</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Communication Info (Immutable)</label>
                 <input 
                   value={editingMentor.email}
                   readOnly
@@ -3648,7 +3648,7 @@ const SpeakerItem = ({ s, onEdit, onDelete, deletingId, setDeletingId, removeSpe
         </div>
         <h4 className="text-2xl font-black uppercase italic tracking-tighter text-white mb-1 leading-none">{s.name}</h4>
         <div className="text-sm font-bold uppercase tracking-widest text-accent-500 mb-4">{s.role}</div>
-        <div className="text-[10px] uppercase tracking-[0.2em] text-white/20 font-black flex items-center gap-2 mb-8">
+        <div className="text-[11px] uppercase tracking-[0.2em] text-white/20 font-black flex items-center gap-2 mb-8">
           <div className="w-1.5 h-1.5 bg-accent-500 rounded-full" />
           {s.company}
         </div>
@@ -3656,7 +3656,7 @@ const SpeakerItem = ({ s, onEdit, onDelete, deletingId, setDeletingId, removeSpe
         <div className="flex items-center gap-3 pt-6 border-t border-white/5">
           <button 
             onClick={() => onEdit(s)} 
-            className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-white/40 hover:text-white hover:border-white/30 transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-white/40 hover:text-white hover:border-white/30 transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
           >
             <Edit2 className="w-3 h-3" /> Edit
           </button>
@@ -3675,8 +3675,8 @@ const SpeakerItem = ({ s, onEdit, onDelete, deletingId, setDeletingId, removeSpe
           <h4 className="text-lg font-black uppercase italic text-white mb-2 leading-tight">Delete Profile?</h4>
           <p className="text-xs text-white/40 mb-6 font-medium">This will permanently remove the speaker from the platform.</p>
           <div className="flex w-full gap-2">
-            <button onClick={() => removeSpeaker(s.id)} className="flex-1 bg-red-500 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest">Confirm</button>
-            <button onClick={() => setDeletingId(null)} className="flex-1 bg-white/10 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest">Cancel</button>
+            <button onClick={() => removeSpeaker(s.id)} className="flex-1 bg-red-500 text-white py-3 rounded-xl font-black uppercase text-[11px] tracking-widest">Confirm</button>
+            <button onClick={() => setDeletingId(null)} className="flex-1 bg-white/10 text-white py-3 rounded-xl font-black uppercase text-[11px] tracking-widest">Cancel</button>
           </div>
         </div>
       )}
@@ -3754,7 +3754,7 @@ function SpeakersManager() {
           <p className="text-white/40 text-sm mt-2">Manage the lineup of speakers for Hacktoberfest Dehradun.</p>
         </div>
         {speakers.length === 0 && (
-          <button onClick={seedDefaults} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">
+          <button onClick={seedDefaults} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[11px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">
             Seed Defaults
           </button>
         )}
@@ -3766,7 +3766,7 @@ function SpeakersManager() {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Speaker Name</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Speaker Name</label>
             <input 
               type="text" 
               placeholder="Full Name" 
@@ -3779,7 +3779,7 @@ function SpeakersManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Designation / Session Role</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Designation / Session Role</label>
             <input 
               type="text" 
               placeholder="e.g. Lead Engineer" 
@@ -3794,7 +3794,7 @@ function SpeakersManager() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Company / Organization</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Company / Organization</label>
             <input 
               type="text" 
               placeholder="e.g. Google" 
@@ -3807,7 +3807,7 @@ function SpeakersManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL (Drive Link / Direct)</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL (Drive Link / Direct)</label>
             <input 
               type="text" 
               placeholder="Paste image URL here" 
@@ -3887,12 +3887,12 @@ const PartnerItem = ({ p, onEdit, onDelete, deletingId, setDeletingId, removePar
           </div>
         )}
         <div className="text-xl font-black italic tracking-tighter text-white mb-2 group-hover:text-accent-500 transition-colors uppercase leading-tight">{p.name}</div>
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-accent-500/60 mb-6">{p.tier} Partner</div>
+        <div className="text-[11px] font-black uppercase tracking-[0.2em] text-accent-500/60 mb-6">{p.tier} Partner</div>
         
         <div className="flex items-center gap-2 w-full pt-4 border-t border-white/5">
           <button 
             onClick={() => onEdit(p)} 
-            className="flex-1 py-2 bg-white/5 border border-white/10 rounded-xl text-white/40 hover:text-white hover:border-white/30 transition-all text-[8px] font-black uppercase tracking-widest flex items-center justify-center gap-1"
+            className="flex-1 py-2 bg-white/5 border border-white/10 rounded-xl text-white/40 hover:text-white hover:border-white/30 transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1"
           >
             <Edit2 className="w-3 h-3" /> Edit
           </button>
@@ -3907,10 +3907,10 @@ const PartnerItem = ({ p, onEdit, onDelete, deletingId, setDeletingId, removePar
 
       {deletingId === p.id && (
         <div className="absolute inset-0 bg-black/95 backdrop-blur-xl z-20 flex flex-col items-center justify-center p-4 text-center animate-in fade-in duration-300 rounded-[32px]">
-          <h4 className="text-[10px] font-black uppercase italic text-white mb-4 leading-tight">Remove Partner?</h4>
+          <h4 className="text-[11px] font-black uppercase italic text-white mb-4 leading-tight">Remove Partner?</h4>
           <div className="flex w-full gap-2">
-            <button onClick={() => removePartner(p.id)} className="flex-1 bg-red-500 text-white py-2 rounded-lg font-black uppercase text-[8px] tracking-widest">Yes</button>
-            <button onClick={() => setDeletingId(null)} className="flex-1 bg-white/10 text-white py-2 rounded-lg font-black uppercase text-[8px] tracking-widest">No</button>
+            <button onClick={() => removePartner(p.id)} className="flex-1 bg-red-500 text-white py-2 rounded-lg font-black uppercase text-[9px] tracking-widest">Yes</button>
+            <button onClick={() => setDeletingId(null)} className="flex-1 bg-white/10 text-white py-2 rounded-lg font-black uppercase text-[9px] tracking-widest">No</button>
           </div>
         </div>
       )}
@@ -3988,7 +3988,7 @@ function PartnersManager() {
           <p className="text-white/40 text-sm mt-2">Manage sponsors and ecosystem partners.</p>
         </div>
         {partners.length === 0 && (
-          <button onClick={seedDefaults} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">
+          <button onClick={seedDefaults} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[11px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">
             Seed Defaults
           </button>
         )}
@@ -4000,7 +4000,7 @@ function PartnersManager() {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Partner Name</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Partner Name</label>
             <input 
               type="text" 
               placeholder="e.g. GOOGLE" 
@@ -4013,7 +4013,7 @@ function PartnersManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Partnership Tier</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Partnership Tier</label>
             <input 
               type="text" 
               placeholder="e.g. TITANIUM PARTNER" 
@@ -4026,7 +4026,7 @@ function PartnersManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Logo URL (Drive UC URL preferred)</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Logo URL (Drive UC URL preferred)</label>
             <input 
               type="text" 
               placeholder="e.g. https://drive.google.com/uc?..." 
@@ -4039,7 +4039,7 @@ function PartnersManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Display Order</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Display Order</label>
             <input 
               type="number" 
               value={(editingPartner ? editingPartner.order : newPartner.order) || 0}
@@ -4146,7 +4146,7 @@ function LocationManager() {
 
       <form onSubmit={handleSave} className="bg-white/5 border border-white/10 p-10 rounded-[40px] space-y-6">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Venue name</label>
+          <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Venue name</label>
           <input 
             value={editData.name}
             onChange={(e) => setEditData({...editData, name: e.target.value})}
@@ -4155,7 +4155,7 @@ function LocationManager() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Address Details</label>
+          <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Address Details</label>
           <input 
             value={editData.address}
             onChange={(e) => setEditData({...editData, address: e.target.value})}
@@ -4165,7 +4165,7 @@ function LocationManager() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">City</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">City</label>
             <input 
               value={editData.city}
               onChange={(e) => setEditData({...editData, city: e.target.value})}
@@ -4174,7 +4174,7 @@ function LocationManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Google Maps Link</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Google Maps Link</label>
             <input 
               value={editData.mapUrl}
               onChange={(e) => setEditData({...editData, mapUrl: e.target.value})}
@@ -4195,7 +4195,7 @@ function LocationManager() {
 
       {location && (
         <div className="bg-accent-500/10 border border-accent-500/20 p-8 rounded-3xl">
-          <p className="text-[10px] font-black uppercase tracking-widest text-accent-500 mb-2">Active Coordinates</p>
+          <p className="text-[11px] font-black uppercase tracking-widest text-accent-500 mb-2">Active Coordinates</p>
           <div className="space-y-1">
             <p className="text-xl font-black uppercase italic text-white">{location.name}</p>
             <p className="text-sm text-white/60">{location.address}, {location.city}</p>
@@ -4436,7 +4436,7 @@ function MarketingManager() {
           onClick={verifySmtp}
           disabled={isVerifying}
           className={cn(
-            "px-6 py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3 border-2",
+            "px-6 py-4 rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3 border-2",
             (status && status.includes("ONLINE"))
               ? "bg-green-600/10 border-green-500 text-green-500 shadow-[0_0_30px_rgba(34,197,94,0.2)]" 
               : "bg-accent-600 border-white/20 text-white shadow-[0_15px_30px_rgba(34,197,94,0.4)] hover:scale-[1.03] active:scale-95 animate-pulse"
@@ -4445,7 +4445,7 @@ function MarketingManager() {
           {isVerifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
           <div className="flex flex-col items-start gap-0.5">
             <span>{(status && status.includes("ONLINE")) ? "System Status: ONLINE" : "System Check"}</span>
-            {(!status || !status.includes("ONLINE")) && <span className="text-[7px] opacity-60">Validate Transmission Infrastructure</span>}
+            {(!status || !status.includes("ONLINE")) && <span className="text-[8px] opacity-60">Validate Transmission Infrastructure</span>}
           </div>
         </button>
       </div>
@@ -4455,8 +4455,8 @@ function MarketingManager() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-in fade-in zoom-in-95 duration-500">
             {Object.entries(smtpConfig).map(([key, val]: [string, any]) => (
               <div key={key} className="bg-white/5 border border-white/10 p-4 rounded-2xl">
-                 <p className="text-[8px] font-black uppercase text-white/30 tracking-widest mb-1">{key.replace('SMTP_', '')}</p>
-                 <p className={cn("text-[10px] font-bold uppercase tracking-tight truncate", val === 'MISSING' ? "text-red-500" : "text-white")}>{val}</p>
+                 <p className="text-[9px] font-black uppercase text-white/30 tracking-widest mb-1">{key.replace('SMTP_', '')}</p>
+                 <p className={cn("text-[11px] font-bold uppercase tracking-tight truncate", val === 'MISSING' ? "text-red-500" : "text-white")}>{val}</p>
               </div>
             ))}
           </div>
@@ -4466,7 +4466,7 @@ function MarketingManager() {
            <div className="flex justify-between items-center">
               <div>
                  <h4 className="text-sm font-black uppercase tracking-tight italic text-white">Manual Pipe Test</h4>
-                 <p className="text-[10px] uppercase font-bold text-white/30 tracking-widest">Verify individual delivery</p>
+                 <p className="text-[11px] uppercase font-bold text-white/30 tracking-widest">Verify individual delivery</p>
               </div>
            </div>
            <div className="flex gap-4">
@@ -4479,7 +4479,7 @@ function MarketingManager() {
               <button 
                 onClick={handleTestEmail}
                 disabled={isTesting}
-                className="px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-black font-black uppercase text-[10px] tracking-widest rounded-2xl transition-all flex items-center gap-2 whitespace-nowrap"
+                className="px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-black font-black uppercase text-[11px] tracking-widest rounded-2xl transition-all flex items-center gap-2 whitespace-nowrap"
               >
                 {isTesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                 Send Diagnostic
@@ -4494,12 +4494,12 @@ function MarketingManager() {
              </div>
              <div>
                 <h3 className="text-lg font-black uppercase tracking-tight italic text-white">Recruitment Protocol</h3>
-                <p className="text-[10px] uppercase font-bold text-white/30 tracking-widest">Send specialized hackathon invites</p>
+                <p className="text-[11px] uppercase font-bold text-white/30 tracking-widest">Send specialized hackathon invites</p>
              </div>
           </div>
           
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Target Email Addresses</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-white/30 ml-4">Target Email Addresses</label>
             <textarea 
               value={emails}
               onChange={(e) => setEmails(e.target.value)}
@@ -4510,11 +4510,11 @@ function MarketingManager() {
         </div>
 
         <div className="p-6 bg-white/5 border border-dashed border-white/10 rounded-3xl space-y-4">
-           <h4 className="text-[10px] font-black uppercase tracking-widest text-accent-500 flex items-center gap-2">
+           <h4 className="text-[11px] font-black uppercase tracking-widest text-accent-500 flex items-center gap-2">
               <ShieldCheck className="w-3.5 h-3.5" /> Signal Preview
            </h4>
            <div className="bg-black/60 p-4 rounded-xl space-y-2 border border-white/5">
-              <p className="text-[11px] text-white/70 font-bold uppercase tracking-widest">Subject: SEATS FILLING FAST: Join Hacktoberfest Dehradun 2026!</p>
+              <p className="text-[12px] text-white/70 font-bold uppercase tracking-widest">Subject: SEATS FILLING FAST: Join Hacktoberfest Dehradun 2026!</p>
               <p className="text-sm text-white/40 italic leading-relaxed">
                 "The grid is almost full. Hacktoberfest Dehradun 2026 is trending towards a sell-out as top-tier talent locks in. 85% capacity reached... Cash prizes, cash mentorship & more. Secure your slot now."
               </p>
@@ -4525,7 +4525,7 @@ function MarketingManager() {
         <div className="flex items-center justify-between p-5 bg-white/5 border border-white/10 rounded-2xl">
           <div className="space-y-1">
             <h4 className="text-xs font-black uppercase tracking-widest text-white">Error Mitigation Matrix</h4>
-            <p className="text-[10px] text-white/40 uppercase font-bold">Configure automated fallback pipelines</p>
+            <p className="text-[11px] text-white/40 uppercase font-bold">Configure automated fallback pipelines</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input 
@@ -4535,7 +4535,7 @@ function MarketingManager() {
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-black after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-500"></div>
-            <span className="ml-3 text-[10px] font-black uppercase text-white/50 tracking-widest">
+            <span className="ml-3 text-[11px] font-black uppercase text-white/50 tracking-widest">
               {autoSkip ? "Auto-Skip Failures" : "Pause on Error"}
             </span>
           </label>
@@ -4550,7 +4550,7 @@ function MarketingManager() {
                   <Loader2 className={cn("w-4 h-4 text-accent-500", currentIndex !== -1 && !isPaused && "animate-spin")} />
                   Queue Broadcast: {queueResults.length} / {queue.length} Transmissions
                 </h4>
-                <p className="text-[10px] text-white/30 uppercase font-black tracking-widest mt-1">
+                <p className="text-[11px] text-white/30 uppercase font-black tracking-widest mt-1">
                   {currentIndex !== -1 ? `Active target: ${queue[currentIndex]}` : "Queue Processing Complete"}
                 </p>
               </div>
@@ -4558,7 +4558,7 @@ function MarketingManager() {
                 {sending && !isPaused && (
                   <button 
                     onClick={handlePauseQueue}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-black uppercase text-[9px] tracking-widest rounded-xl transition-all"
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-black uppercase text-[10px] tracking-widest rounded-xl transition-all"
                   >
                     Pause Broadcast
                   </button>
@@ -4566,7 +4566,7 @@ function MarketingManager() {
                 {isPaused && (
                   <button 
                     onClick={handleContinueEmailing}
-                    className="px-4 py-2 bg-green-500 text-black font-black uppercase text-[9px] tracking-widest rounded-xl transition-all hover:bg-green-400"
+                    className="px-4 py-2 bg-green-500 text-black font-black uppercase text-[10px] tracking-widest rounded-xl transition-all hover:bg-green-400"
                   >
                     Resume Broadcast
                   </button>
@@ -4582,7 +4582,7 @@ function MarketingManager() {
                   style={{ width: `${Math.min(100, Math.round((queueResults.length / queue.length) * 100))}%` }}
                 />
               </div>
-              <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-white/40">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
                 <span>{Math.round((queueResults.length / queue.length) * 100)}% Uploaded</span>
                 <span className="flex gap-4">
                   <span className="text-green-500">{queueResults.filter(r => r.status === 'sent').length} Sent</span>
@@ -4595,25 +4595,25 @@ function MarketingManager() {
             {activeError && (
               <div className="p-6 bg-red-500/10 border border-red-500/30 rounded-2xl space-y-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-red-500">SMTP Transport Halted</p>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-red-500">SMTP Transport Halted</p>
                   <p className="text-xs text-white/80 font-mono italic leading-relaxed">{activeError}</p>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                   <button 
                     onClick={handleSkipAndContinue}
-                    className="px-5 py-3 bg-white/10 hover:bg-white text-white hover:text-black font-black uppercase text-[9px] tracking-widest rounded-xl transition-all"
+                    className="px-5 py-3 bg-white/10 hover:bg-white text-white hover:text-black font-black uppercase text-[10px] tracking-widest rounded-xl transition-all"
                   >
                     Skip Address
                   </button>
                   <button 
                     onClick={handleRetryEmail}
-                    className="px-5 py-3 bg-accent-500 text-black font-black uppercase text-[9px] tracking-widest rounded-xl transition-all hover:bg-accent-400"
+                    className="px-5 py-3 bg-accent-500 text-black font-black uppercase text-[10px] tracking-widest rounded-xl transition-all hover:bg-accent-400"
                   >
                     Retry Address
                   </button>
                   <button 
                     onClick={handleContinueEmailing}
-                    className="px-5 py-3 bg-green-500 text-black font-black uppercase text-[9px] tracking-widest rounded-xl transition-all hover:bg-green-400"
+                    className="px-5 py-3 bg-green-500 text-black font-black uppercase text-[10px] tracking-widest rounded-xl transition-all hover:bg-green-400"
                   >
                     Continue Emailing
                   </button>
@@ -4625,7 +4625,7 @@ function MarketingManager() {
 
         {status && (
           <div className={cn(
-            "p-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border shadow-2xl animate-in fade-in slide-in-from-bottom-2",
+            "p-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] border shadow-2xl animate-in fade-in slide-in-from-bottom-2",
             status.includes("Error") || status.includes("Failure") || status.includes("Alert") || status.includes("Failed") || status.includes("suspended") ? "bg-red-500/10 border-red-500/30 text-red-500" : "bg-green-500/10 border-green-500/30 text-green-500"
           )}>
             {status}
@@ -4634,9 +4634,9 @@ function MarketingManager() {
 
         {queueResults.length > 0 && queueResults.some(r => r.status === "failed") && (
           <div className="space-y-2 max-h-[300px] overflow-y-auto p-4 bg-red-500/5 border border-red-500/10 rounded-2xl">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-4">Diagnostic Log (Failures)</h4>
+            <h4 className="text-[11px] font-black uppercase tracking-widest text-red-500 mb-4">Diagnostic Log (Failures)</h4>
             {queueResults.filter(r => r.status === "failed").map((res: any, idx: number) => (
-              <div key={idx} className="flex justify-between items-center gap-4 text-[10px] font-mono text-red-500/70 border-b border-red-500/10 pb-2">
+              <div key={idx} className="flex justify-between items-center gap-4 text-[11px] font-mono text-red-500/70 border-b border-red-500/10 pb-2">
                 <span>{res.email}</span>
                 <span className="text-right italic">{res.error}</span>
               </div>
@@ -4650,11 +4650,11 @@ function MarketingManager() {
                  <h3 className="text-sm font-black uppercase tracking-tight italic text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-white/40" /> Recent Transmissions
                  </h3>
-                 <p className="text-[8px] uppercase font-bold text-white/20 tracking-widest mt-1">Live server event stream (Last 50)</p>
+                 <p className="text-[9px] uppercase font-bold text-white/20 tracking-widest mt-1">Live server event stream (Last 50)</p>
               </div>
               <button 
                 onClick={fetchLogs}
-                className="text-[8px] font-black uppercase tracking-widest text-info-400 hover:text-info-300 transition-all"
+                className="text-[9px] font-black uppercase tracking-widest text-info-400 hover:text-info-300 transition-all"
               >
                 Force Sync
               </button>
@@ -4665,43 +4665,43 @@ function MarketingManager() {
                  <table className="w-full text-left">
                     <thead>
                        <tr className="bg-white/5">
-                          <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-white/30">Target</th>
-                          <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-white/30">Subject</th>
-                          <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-white/30">Status</th>
-                          <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-white/30 text-right">Time</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-white/30">Target</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-white/30">Subject</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-white/30">Status</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-white/30 text-right">Time</th>
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                        {mailLogs.length === 0 ? (
                          <tr>
-                            <td colSpan={4} className="px-6 py-12 text-center text-white/10 text-[10px] uppercase font-black tracking-widest">No recent transmission data</td>
+                            <td colSpan={4} className="px-6 py-12 text-center text-white/10 text-[11px] uppercase font-black tracking-widest">No recent transmission data</td>
                          </tr>
                        ) : (
                          mailLogs.slice(0, 15).map((log, i) => (
                            <tr key={i} className="hover:bg-white/5 transition-all group">
                               <td className="px-6 py-4">
-                                 <div className="text-[11px] font-bold text-white group-hover:text-info-400 transition-colors uppercase tracking-tight">{log.to}</div>
-                                 <div className="text-[8px] text-white/20 uppercase font-black tracking-widest mt-0.5">{log.category || 'general'}</div>
+                                 <div className="text-[12px] font-bold text-white group-hover:text-info-400 transition-colors uppercase tracking-tight">{log.to}</div>
+                                 <div className="text-[9px] text-white/20 uppercase font-black tracking-widest mt-0.5">{log.category || 'general'}</div>
                               </td>
-                              <td className="px-6 py-4 text-[10px] text-white/40 max-w-[200px] truncate">{log.subject}</td>
+                              <td className="px-6 py-4 text-[11px] text-white/40 max-w-[200px] truncate">{log.subject}</td>
                               <td className="px-6 py-4">
                                  {log.success ? (
                                    <div className="space-y-1">
-                                      <div className="flex items-center gap-1.5 text-[9px] font-black text-green-500 uppercase tracking-widest">
+                                      <div className="flex items-center gap-1.5 text-[10px] font-black text-green-500 uppercase tracking-widest">
                                          <CheckCircle className="w-3 h-3" /> Transmitted
                                       </div>
-                                      <div className="text-[8px] text-green-500/40 font-mono truncate max-w-[150px]">{log.response}</div>
+                                      <div className="text-[9px] text-green-500/40 font-mono truncate max-w-[150px]">{log.response}</div>
                                    </div>
                                  ) : (
                                    <div className="space-y-1">
-                                      <div className="flex items-center gap-1.5 text-[9px] font-black text-red-500 uppercase tracking-widest">
+                                      <div className="flex items-center gap-1.5 text-[10px] font-black text-red-500 uppercase tracking-widest">
                                          <XCircle className="w-3 h-3" /> FAILED
                                       </div>
-                                      <div className="text-[8px] text-red-500/50 font-mono italic max-w-[150px] truncate">{log.error}</div>
+                                      <div className="text-[9px] text-red-500/50 font-mono italic max-w-[150px] truncate">{log.error}</div>
                                    </div>
                                  )}
                               </td>
-                              <td className="px-6 py-4 text-right text-[10px] font-mono text-white/20 italic">
+                              <td className="px-6 py-4 text-right text-[11px] font-mono text-white/20 italic">
                                  {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : "N/A"}
                               </td>
                            </tr>
@@ -4789,7 +4789,7 @@ function GuestManager() {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Guest Name</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Guest Name</label>
             <input 
               type="text" 
               placeholder="Full Name" 
@@ -4802,7 +4802,7 @@ function GuestManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Position</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Position</label>
             <input 
               type="text" 
               placeholder="e.g. Chief Minister, Director" 
@@ -4815,7 +4815,7 @@ function GuestManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL (Drive/Unsplash)</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Photo URL (Drive/Unsplash)</label>
             <input 
               type="text" 
               placeholder="Link to photo" 
@@ -4828,7 +4828,7 @@ function GuestManager() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-4">Display Order</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Display Order</label>
             <input 
               type="number" 
               placeholder="0" 
@@ -4876,19 +4876,19 @@ function GuestManager() {
               </div>
               <div>
                 <h3 className="font-black uppercase italic tracking-tighter text-white leading-tight">{guest.name}</h3>
-                <p className="text-accent-500 text-[10px] font-black uppercase tracking-widest mt-1">{guest.position}</p>
-                <div className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-2 bg-white/5 px-2 py-1 rounded-md inline-block">Order: {guest.order}</div>
+                <p className="text-accent-500 text-[11px] font-black uppercase tracking-widest mt-1">{guest.position}</p>
+                <div className="text-[10px] text-white/20 font-bold uppercase tracking-widest mt-2 bg-white/5 px-2 py-1 rounded-md inline-block">Order: {guest.order}</div>
               </div>
             </div>
             
             <div className="mt-6 pt-6 border-t border-white/5 flex gap-2">
-              <button onClick={() => setEditingGuest(guest)} className="flex-1 py-3 bg-white/5 text-white/40 hover:text-white hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+              <button onClick={() => setEditingGuest(guest)} className="flex-1 py-3 bg-white/5 text-white/40 hover:text-white hover:bg-white/10 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2">
                 <Edit2 className="w-3.5 h-3.5" /> Edit
               </button>
               <button 
                 onClick={() => deletingId === guest.id ? removeGuest(guest.id) : setDeletingId(guest.id)} 
                 className={cn(
-                  "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
+                  "flex-1 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
                   deletingId === guest.id ? "bg-red-500 text-white" : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
                 )}
               >

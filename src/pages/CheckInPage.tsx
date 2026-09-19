@@ -76,7 +76,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="w-8 h-8 text-accent-500 animate-spin mx-auto" />
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Scanning Credentials...</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/30">Scanning Credentials...</p>
         </div>
       </div>
     );
@@ -92,7 +92,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
         {/* Navigation Indicator / Back Home */}
         <Link 
           to="/" 
-          className="inline-flex items-center gap-2 text-white/40 hover:text-white text-[10px] font-black uppercase tracking-widest mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-white/40 hover:text-white text-[11px] font-black uppercase tracking-widest mb-8 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Platform Home
         </Link>
@@ -108,7 +108,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
             </div>
             <Link 
               to="/" 
-              className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-wider rounded-xl transition-all inline-block border border-white/5"
+              className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-black text-[11px] uppercase tracking-wider rounded-xl transition-all inline-block border border-white/5"
             >
               Back to Fleet
             </Link>
@@ -117,7 +117,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
           <div className="space-y-8">
             {/* Status Header */}
             <div className="text-center space-y-4">
-              <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-white/5 bg-white/5">
+              <div className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-white/5 bg-white/5">
                 <Shield className="w-3 h-3 text-accent-500" /> Entrance Gate Verifier
               </div>
               
@@ -134,13 +134,13 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
                   <div className="bg-green-500/10 border border-green-500/30 p-6 rounded-3xl space-y-2 text-center shadow-[0_0_30px_rgba(34,197,94,0.05)]">
                     <CheckCircle className="w-8 h-8 text-green-400 mx-auto" />
                     <div className="text-xs font-black uppercase tracking-[0.2em] text-green-400">Venue Entry Authorized</div>
-                    <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Contactless Check-In Confirmed</p>
+                    <p className="text-[11px] text-white/50 font-bold uppercase tracking-wider">Contactless Check-In Confirmed</p>
                   </div>
                 ) : (
                   <div className="bg-accent-500/10 border border-accent-500/30 p-6 rounded-3xl space-y-2 text-center shadow-[0_0_30px_rgba(34,197,94,0.05)]">
                     <Clock className="w-8 h-8 text-accent-400 mx-auto" />
                     <div className="text-xs font-black uppercase tracking-[0.2em] text-accent-400">Admittance Pending</div>
-                    <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Awaiting Staff Credentials Scanning</p>
+                    <p className="text-[11px] text-white/50 font-bold uppercase tracking-wider">Awaiting Staff Credentials Scanning</p>
                   </div>
                 )}
               </div>
@@ -150,10 +150,10 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
             {isStaff && !team.checkedIn && (
               <div className="p-6 bg-accent-500/5 border border-accent-500/10 rounded-3xl space-y-4">
                 <div className="text-center">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent-500">
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-accent-500">
                     Command Authorization Required
                   </span>
-                  <p className="text-[10px] text-white/30 font-medium leading-normal mt-1">
+                  <p className="text-[11px] text-white/30 font-medium leading-normal mt-1">
                     You have secure Gatekeeper clearance. Please check the identity of presenting participants before authorizing.
                   </p>
                 </div>
@@ -176,14 +176,14 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
             {/* If Staff scanned but already checked-in */}
             {isStaff && team.checkedIn && (
               <div className="p-5 bg-white/[0.02] border border-white/5 rounded-3xl space-y-3">
-                <div className="text-[10px] font-black uppercase tracking-wider text-white/30">Verification Log</div>
+                <div className="text-[11px] font-black uppercase tracking-wider text-white/30">Verification Log</div>
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div>
-                    <div className="text-[9px] text-white/45 uppercase font-bold tracking-widest">Operator Email</div>
+                    <div className="text-[10px] text-white/45 uppercase font-bold tracking-widest">Operator Email</div>
                     <div className="font-semibold text-white mt-1 truncate max-w-[150px]">{team.checkedInBy || "Unknown Staff"}</div>
                   </div>
                   <div>
-                    <div className="text-[9px] text-white/45 uppercase font-bold tracking-widest">Verification Time</div>
+                    <div className="text-[10px] text-white/45 uppercase font-bold tracking-widest">Verification Time</div>
                     <div className="font-semibold text-white mt-1">
                       {team.checkedInAt ? new Date(team.checkedInAt.seconds ? team.checkedInAt.seconds * 1000 : team.checkedInAt).toLocaleString() : "Syncing..."}
                     </div>
@@ -194,7 +194,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
 
             {/* Team Details Block */}
             <div className="space-y-4 border-t border-white/5 pt-6">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 flex items-center gap-2">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-white/30 flex items-center gap-2">
                 <Users className="w-3.5 h-3.5" /> Presenting Squaddies (Members)
               </h3>
               
@@ -207,12 +207,12 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
                       </div>
                       <div>
                         <div className="text-xs font-black uppercase tracking-tight">{member.name || "Hacker"}</div>
-                        <div className="text-[9px] text-white/30 font-medium">{member.email}</div>
+                        <div className="text-[10px] text-white/30 font-medium">{member.email}</div>
                       </div>
                     </div>
                     <div>
                       <span className={cn(
-                        "text-[8px] font-black uppercase tracking-widest border px-2 py-0.5 rounded-md",
+                        "text-[9px] font-black uppercase tracking-widest border px-2 py-0.5 rounded-md",
                         member.role === "leader" ? "bg-accent-500/10 border-accent-500/20 text-accent-500" : "bg-white/5 border-white/5 text-white/30"
                       )}>
                         {member.role || "Member"}
@@ -225,7 +225,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
               {/* Logistics Grid */}
               <div className="grid grid-cols-2 gap-4 bg-white/[0.02] border border-white/5 p-4 rounded-3xl mt-4">
                 <div className="space-y-1">
-                  <div className="text-[9px] text-white/45 uppercase font-bold tracking-widest flex items-center gap-1">
+                  <div className="text-[10px] text-white/45 uppercase font-bold tracking-widest flex items-center gap-1">
                     <Award className="w-3 h-3 text-accent-500" /> Selected Track
                   </div>
                   <div className="text-xs font-black uppercase tracking-tight text-white italic truncate pr-2">
@@ -236,7 +236,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-[9px] text-white/45 uppercase font-bold tracking-widest flex items-center gap-1">
+                  <div className="text-[10px] text-white/45 uppercase font-bold tracking-widest flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-accent-500" /> Origin City
                   </div>
                   <div className="text-xs font-black uppercase tracking-tight text-accent-500 italic">
@@ -248,7 +248,7 @@ export default function CheckInPage({ user, isAdmin, isMentor }: CheckInPageProp
 
             {/* System Status / Instructions */}
             {message && (
-              <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-2xl text-[10px] uppercase font-black tracking-widest text-center">
+              <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-2xl text-[11px] uppercase font-black tracking-widest text-center">
                 {message}
               </div>
             )}

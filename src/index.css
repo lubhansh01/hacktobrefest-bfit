@@ -30,6 +30,29 @@
   --color-info-500: #0ea5e9;
 
   --radius-4xl: 2rem;
+
+  /*
+    Type scale, nudged up from the Tailwind defaults — the old body copy read
+    small on a laptop. Body sizes move about one step; the display sizes (4xl
+    and up) are left alone, since the headings were already large and growing
+    them pushes the hero out of its viewport.
+    Line heights are set alongside each size, otherwise the defaults stay
+    pinned to the old absolute values and the lines come out cramped.
+  */
+  --text-xs: 0.8125rem;                 /* 13px, was 12 */
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.9375rem;                 /* 15px, was 14 */
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1.0625rem;               /* 17px, was 16 */
+  --text-base--line-height: 1.625rem;
+  --text-lg: 1.1875rem;                 /* 19px, was 18 */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.3125rem;                 /* 21px, was 20 */
+  --text-xl--line-height: 1.875rem;
+  --text-2xl: 1.5625rem;                /* 25px, was 24 */
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.9375rem;                /* 31px, was 30 */
+  --text-3xl--line-height: 2.375rem;
 }
 
 @keyframes shimmer {
