@@ -9,7 +9,10 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, '.') },
   },
   server: {
-    port: 5173,
+    port: 5174,
+    // Fail loudly instead of drifting: the OAuth redirect URL is
+    // registered against this exact origin in the Supabase dashboard.
+    strictPort: true,
     // In dev the API lives on its own port. Proxying keeps VITE_API_URL empty
     // locally, so the same relative /api/* paths work in dev and in prod.
     proxy: {

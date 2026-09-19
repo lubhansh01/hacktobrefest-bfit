@@ -15,7 +15,7 @@ Two terminals — they are separate apps with separate installs:
 
 ```bash
 cd backend  && npm install && npm run dev   # API  on :3001
-cd frontend && npm install && npm run dev   # SPA  on :5173
+cd frontend && npm install && npm run dev   # SPA  on :5174
 ```
 
 Vite proxies `/api/*` to `http://localhost:3001`, so `VITE_API_URL` stays empty
@@ -45,9 +45,30 @@ variable — those are inlined into the browser bundle.
 and `VITE_API_URL` (the backend's public URL) at build time — Vite inlines them,
 so changing one needs a rebuild.
 
-**Backend** (Cloud Run, Railway, Render, Fly): root `backend`, start
-`npm run start`. Set the `SMTP_*` vars, `APP_URL`, and `CORS_ORIGIN` to the
-frontend's deployed origin. Health check: `GET /healthz`.
+**Backend** (Render): `render.yaml` at the repo root describes the service.
+In Render, *New > Blueprint*, point it at this repo, and fill in the prompted
+values (`CORS_ORIGIN`, `APP_URL`, `SMTP_*`).
+
+To configure it by hand instead, or on another host:
+
+| Setting | Value |
+|---|---|
+| Root directory | `backend` |
+| Build command | `npm install` |
+| Start command | `npm run start` |
+| Health check path | `/healthz` |
+| Node version | 20+ |
+
+`PORT` is injected by the platform and read by `server.ts`; do not set it
+manually. Set `CORS_ORIGIN` to the frontend's deployed origin, or the browser
+will block every API call.
+
+Note: `tsx` is a runtime dependency, not a dev one — `npm run start` executes
+it, and production installs skip `devDependencies`.
+
+Render's free plan sleeps after inactivity, so the first request after an idle
+period takes ~30s. That is slow enough to time out an email send from the admin
+panel; use a paid instance if that matters.
 
 ## Database
 
