@@ -81,9 +81,10 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-7">
-            {navLink("/#tracks", "Tracks", hash === "#tracks")}
-            {navLink("/#schedule", "Schedule", hash === "#schedule")}
+            {navLink("/tracks", "Tracks", pathname === "/tracks")}
+            {navLink("/schedule", "Schedule", pathname === "/schedule")}
             {navLink("/about", "About", pathname === "/about")}
+            {navLink("/register", "Register", pathname === "/register")}
             {isAdmin && (
               <Link to="/admin" className="flex items-center gap-1.5 text-[14px] font-medium text-accent-400 hover:text-accent-300 transition-colors">
                 <ShieldCheck className="w-4 h-4" aria-hidden="true" />
@@ -139,9 +140,34 @@ export default function Navbar({ user, isAdmin, isMentor }: { user: User | null;
         {/* Mobile Menu */}
         {isOpen && (
           <div id="mobile-menu" className="md:hidden bg-canvas border-b border-white/10 px-5 py-5 flex flex-col">
-            <Link to="/#tracks" className="py-3 text-base font-medium border-b border-white/5">Tracks</Link>
-            <Link to="/#schedule" className="py-3 text-base font-medium border-b border-white/5">Schedule</Link>
-            <Link to="/about" className="py-3 text-base font-medium border-b border-white/5">About</Link>
+            <Link
+              to="/tracks"
+              aria-current={pathname === "/tracks" ? "page" : undefined}
+              className={cn("py-3 text-base font-medium border-b border-white/5", pathname === "/tracks" ? "text-accent-400" : undefined)}
+            >
+              Tracks
+            </Link>
+            <Link
+              to="/schedule"
+              aria-current={pathname === "/schedule" ? "page" : undefined}
+              className={cn("py-3 text-base font-medium border-b border-white/5", pathname === "/schedule" ? "text-accent-400" : undefined)}
+            >
+              Schedule
+            </Link>
+            <Link
+              to="/about"
+              aria-current={pathname === "/about" ? "page" : undefined}
+              className={cn("py-3 text-base font-medium border-b border-white/5", pathname === "/about" ? "text-accent-400" : undefined)}
+            >
+              About
+            </Link>
+            <Link
+              to="/register"
+              aria-current={pathname === "/register" ? "page" : undefined}
+              className={cn("py-3 text-base font-medium border-b border-white/5", pathname === "/register" ? "text-accent-400" : undefined)}
+            >
+              Register
+            </Link>
             {isAdmin && <Link to="/admin" className="py-3 text-base font-medium text-accent-400 border-b border-white/5">Admin Panel</Link>}
             {isMentor && <Link to="/mentor" className="py-3 text-base font-medium text-info-400 border-b border-white/5">Mentor Panel</Link>}
             {user && !isAdmin && !isMentor && <Link to="/dashboard" className="py-3 text-base font-medium border-b border-white/5">Dashboard</Link>}

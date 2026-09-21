@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type ReactNode } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase, subscribe, subscribeRow, signInWithGoogle, type User } from "../lib/supabase";
@@ -8,10 +8,6 @@ import {
   Users,
   Calendar,
   MapPin,
-  Lightbulb,
-  HeartPulse,
-  Search,
-  Sparkles,
   Loader2,
   UserCheck,
   Lock,
@@ -20,45 +16,8 @@ import {
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { EVENT_START, EVENT_DATES, EVENT_START_LABEL, EVENT_END_LABEL, eventPhase } from "../lib/event";
-
-
-
-const trackIcons: Record<string, any> = {
-  "EdTech": {
-    icon: Lightbulb,
-    color: "text-info-400",
-    bg: "bg-info-400/10",
-    ring: "border-info-400/30",
-    problems: ["Academic Performance & At-Risk Student Detection", "Industry-Ready Skill Tracking Gap"]
-  },
-  "Healthcare": {
-    icon: HeartPulse,
-    color: "text-rose-400",
-    bg: "bg-rose-400/10",
-    ring: "border-rose-400/30",
-    problems: ["Fragmented Medical Records", "Real-Time Emergency Resource Discovery"]
-  },
-  "On-Demand Local Services": {
-    icon: Search,
-    color: "text-amber-400",
-    bg: "bg-amber-400/10",
-    ring: "border-amber-400/30",
-    problems: ["Fragmented Local Service Access", "Trust and Verification Gap"]
-  }
-};
-
-/** Tracks are stored with full titles, so match the theme on a keyword. */
-const themeFor = (name: string = "") => {
-  const key = Object.keys(trackIcons).find(k =>
-    name.toLowerCase().includes(k.toLowerCase().split(" ")[0])
-  );
-  return (key && trackIcons[key]) || {
-    icon: Sparkles,
-    color: "text-accent-400",
-    bg: "bg-accent-400/10",
-    ring: "border-accent-400/30"
-  };
-};
+import { SectionHead, Eyebrow } from "../components/SectionHead";
+import { themeFor } from "../lib/tracks-theme";
 
 const getImageUrl = (url: string) => {
   if (!url) return "";
@@ -117,26 +76,6 @@ function useCursorGlow(enabled: boolean) {
 
   return { hostRef, glowRef };
 }
-
-/** Small mono eyebrow used to open every section. */
-const Eyebrow = ({ children, tone = "accent" }: { children: ReactNode; tone?: "accent" | "info" }) => (
-  <div className="flex items-center gap-3 mb-5">
-    <span className={cn("w-1.5 h-1.5 rounded-full", tone === "accent" ? "bg-accent-400" : "bg-info-400")} />
-    <span className={cn("font-mono text-[12px] tracking-[0.25em] uppercase", tone === "accent" ? "text-accent-400" : "text-info-400")}>
-      {children}
-    </span>
-  </div>
-);
-
-const SectionHead = ({ eyebrow, title, sub, tone }: { eyebrow: string; title: ReactNode; sub?: string; tone?: "accent" | "info" }) => (
-  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-    <div className="max-w-2xl">
-      <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
-      <h2 className="font-display text-4xl md:text-5xl font-bold leading-[1.05]">{title}</h2>
-    </div>
-    {sub && <p className="max-w-sm text-white/50 text-[16px] leading-relaxed">{sub}</p>}
-  </div>
-);
 
 function Countdown() {
   const [now, setNow] = useState(() => Date.now());
@@ -366,12 +305,12 @@ export default function LandingPage({ user }: { user: User | null }) {
                   )}
                 </button>
               )}
-              <a
-                href="#tracks"
+              <Link
+                to="/tracks"
                 className="inline-flex items-center justify-center h-12 px-7 rounded-xl border border-white/15 text-white/75 font-bold text-sm hover:bg-white/5 hover:text-white transition-colors w-full sm:w-auto"
               >
                 View tracks
-              </a>
+              </Link>
             </div>
 
             <p className="mt-4 inline-flex items-center gap-2 font-mono text-[12px] tracking-wide text-white/35">

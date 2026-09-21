@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { supabase, type User } from "./lib/supabase";
 import LandingPage from "./pages/LandingPage";
+import TracksPage from "./pages/TracksPage";
+import SchedulePage from "./pages/SchedulePage";
 import AboutPage from "./pages/AboutPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import AdminPanel from "./pages/AdminPanel";
@@ -79,6 +81,8 @@ export default function App() {
         <main id="main">
           <Routes>
             <Route path="/" element={<LandingPage user={user} />} />
+            <Route path="/tracks" element={<TracksPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/register" element={<RegistrationPage user={user} />} />
             <Route path="/dashboard" element={<TeamDashboard user={user} isAdmin={isAdmin} isMentor={isMentor} />} />
@@ -102,8 +106,8 @@ export default function App() {
             <div>
               <h2 className="font-mono text-[11px] tracking-[0.25em] uppercase text-white/35 mb-4">Event</h2>
               <ul className="space-y-2.5 text-sm">
-                <li><Link to="/#tracks" className="text-white/60 hover:text-white transition-colors">Tracks</Link></li>
-                <li><Link to="/#schedule" className="text-white/60 hover:text-white transition-colors">Schedule</Link></li>
+                <li><Link to="/tracks" className="text-white/60 hover:text-white transition-colors">Tracks</Link></li>
+                <li><Link to="/schedule" className="text-white/60 hover:text-white transition-colors">Schedule</Link></li>
                 <li><Link to="/about" className="text-white/60 hover:text-white transition-colors">About</Link></li>
               </ul>
             </div>
